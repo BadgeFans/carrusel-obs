@@ -15,32 +15,65 @@
     
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <script>
+        // Función para calcular horas restantes
+        function getHoursRemaining(endDateStr) {
+            try {
+                // Parsear fecha en formato DD/MM/YYYY HH:MM o DD/MM/YYYY
+                const parts = endDateStr.trim().split(' ');
+                const dateParts = parts[0].split('/');
+                
+                let hours = 23, minutes = 59;
+                if (parts.length > 1) {
+                    const timeParts = parts[1].split(':');
+                    hours = parseInt(timeParts[0]) || 23;
+                    minutes = parseInt(timeParts[1]) || 59;
+                }
+                
+                const endDate = new Date(
+                    parseInt(dateParts[2]), // year
+                    parseInt(dateParts[1]) - 1, // month (0-indexed)
+                    parseInt(dateParts[0]), // day
+                    hours,
+                    minutes
+                );
+                
+                const now = new Date();
+                const diff = endDate - now;
+                
+                if (diff <= 0) return null; // Evento terminado
+                
+                const hoursRemaining = Math.floor(diff / (1000 * 60 * 60));
+                return hoursRemaining;
+            } catch (e) {
+                console.error('Error parsing date:', e);
+                return null;
+            }
+        }
+        
         // Cargar items desde el CMS
         async function loadCarouselItems() {
             try {
-                // Obtener la lista de archivos del repositorio
                 const response = await fetch('https://api.github.com/repos/BadgeFans/carrusel-obs/contents/content/carousel');
                 const files = await response.json();
                 
                 const track = document.getElementById('carousel-track');
                 const items = [];
                 
-                // Cargar cada archivo
                 for (const file of files) {
                     const fileResponse = await fetch(file.download_url);
                     const fileContent = await fileResponse.text();
                     
-                    // Parsear el frontmatter
                     const match = fileContent.match(/---\n([\s\S]*?)\n---/);
                     if (match) {
                         const frontmatter = match[1];
-                        const item = {};
+                        const item = { order: 999 }; // default order
                         
                         frontmatter.split('\n').forEach(line => {
-                            const [key, ...valueParts] = line.split(':');
-                            if (key && valueParts.length) {
-                                const value = valueParts.join(':').trim();
-                                item[key.trim()] = value;
+                            const colonIndex = line.indexOf(':');
+                            if (colonIndex > -1) {
+                                const key = line.substring(0, colonIndex).trim();
+                                const value = line.substring(colonIndex + 1).trim();
+                                item[key] = value;
                             }
                         });
                         
@@ -48,25 +81,29 @@
                     }
                 }
                 
-                // Si no hay items del CMS, usar los por defecto
                 if (items.length === 0) {
                     items.push(
-                        { title: '!Alone', icon: '🎮', dateStart: '07/10/2025', dateEnd: '23/10/2025', status: 'live' },
-                        { title: '!Low', icon: '💀', dateStart: '07/10/2025', dateEnd: '23/10/2025', status: 'live' },
-                        { title: '!Totodile', icon: '🐉', dateStart: '20/10/2025', dateEnd: '22/10/2025', status: 'live' },
-                        { title: '!Tepig', icon: '🔥', dateStart: '18/10/2025', dateEnd: '20/10/2025', status: 'toolate' },
-                        { title: '!Chikorita', icon: '🍃', dateStart: '16/10/2025', dateEnd: '18/10/2025', status: 'toolate' },
-                        { title: '!LoL Worlds', icon: '🌍', dateStart: '10/10/2025', dateEnd: '10/11/2025', status: 'live' },
-                        { title: '!Battle', icon: '⚔️', dateStart: '05/10/2025', dateEnd: '30/10/2025', status: 'live' },
-                        { title: '!Mission', icon: '🎯', dateStart: '01/10/2025', dateEnd: '25/10/2025', status: 'live' },
-                        { title: '!Champion', icon: '🏆', dateStart: '12/10/2025', dateEnd: '28/10/2025', status: 'live' }
+                        { order: 1, title: '!Alone', icon: '🎮', dateStart: '07/10/2025', dateEnd: '23/10/2025 23:59', status: 'live', showCountdown: 'true' },
+                        { order: 2, title: '!Low', icon: '💀', dateStart: '07/10/2025', dateEnd: '23/10/2025 23:59', status: 'live', showCountdown: 'true' },
+                        { order: 3, title: '!Totodile', icon: '🐉', dateStart: '20/10/2025', dateEnd: '22/10/2025 23:59', status: 'live', showCountdown: 'true' },
+                        { order: 4, title: '!Tepig', icon: '🔥', dateStart: '18/10/2025', dateEnd: '20/10/2025 23:59', status: 'toolate', showCountdown: 'false' },
+                        { order: 5, title: '!Chikorita', icon: '🍃', dateStart: '16/10/2025', dateEnd: '18/10/2025 23:59', status: 'toolate', showCountdown: 'false' },
+                        { order: 6, title: '!LoL Worlds', icon: '🌍', dateStart: '10/10/2025', dateEnd: '10/11/2025 23:59', status: 'live', showCountdown: 'true' },
+                        { order: 7, title: '!Battle', icon: '⚔️', dateStart: '05/10/2025', dateEnd: '30/10/2025 23:59', status: 'live', showCountdown: 'true' },
+                        { order: 8, title: '!Mission', icon: '🎯', dateStart: '01/10/2025', dateEnd: '25/10/2025 23:59', status: 'live', showCountdown: 'true' },
+                        { order: 9, title: '!Champion', icon: '🏆', dateStart: '12/10/2025', dateEnd: '28/10/2025 23:59', status: 'live', showCountdown: 'true' }
                     );
                 }
                 
-                // Duplicar para loop infinito
+                // Ordenar por el campo "order"
+                items.sort((a, b) => {
+                    const orderA = parseInt(a.order) || 999;
+                    const orderB = parseInt(b.order) || 999;
+                    return orderA - orderB;
+                });
+                
                 const allItems = [...items, ...items];
                 
-                // Renderizar items
                 allItems.forEach(item => {
                     const div = document.createElement('div');
                     div.className = 'carousel-item';
@@ -80,12 +117,24 @@
                     
                     const statusText = item.status === 'live' ? 'LIVE' : 'Too late';
                     
+                    // Calcular horas restantes
+                    let countdownHTML = '';
+                    const showCountdown = item.showCountdown === 'true' || item.showCountdown === true;
+                    
+                    if (showCountdown && item.status === 'live') {
+                        const hoursLeft = getHoursRemaining(item.dateEnd);
+                        if (hoursLeft !== null && hoursLeft > 0) {
+                            countdownHTML = `<div class="countdown">⏱️ ${hoursLeft}h restantes</div>`;
+                        }
+                    }
+                    
                     div.innerHTML = `
                         <div class="icon">${iconHTML}</div>
                         <div class="info">
                             <h3>${item.title}</h3>
                             <span class="status ${item.status}">${statusText}</span>
-                            <p class="date">${item.dateStart} - ${item.dateEnd}</p>
+                            ${countdownHTML}
+                            <p class="date">${item.dateStart} - ${item.dateEnd.split(' ')[0]}</p>
                         </div>
                     `;
                     
@@ -94,7 +143,6 @@
                 
             } catch (error) {
                 console.error('Error cargando items:', error);
-                // Si hay error, usar items por defecto
                 loadDefaultItems();
             }
         }
@@ -102,15 +150,15 @@
         function loadDefaultItems() {
             const track = document.getElementById('carousel-track');
             const defaultItems = [
-                { title: '!Alone', icon: '🎮', dateStart: '07/10/2025', dateEnd: '23/10/2025', status: 'live' },
-                { title: '!Low', icon: '💀', dateStart: '07/10/2025', dateEnd: '23/10/2025', status: 'live' },
-                { title: '!Totodile', icon: '🐉', dateStart: '20/10/2025', dateEnd: '22/10/2025', status: 'live' },
-                { title: '!Tepig', icon: '🔥', dateStart: '18/10/2025', dateEnd: '20/10/2025', status: 'toolate' },
-                { title: '!Chikorita', icon: '🍃', dateStart: '16/10/2025', dateEnd: '18/10/2025', status: 'toolate' },
-                { title: '!LoL Worlds', icon: '🌍', dateStart: '10/10/2025', dateEnd: '10/11/2025', status: 'live' },
-                { title: '!Battle', icon: '⚔️', dateStart: '05/10/2025', dateEnd: '30/10/2025', status: 'live' },
-                { title: '!Mission', icon: '🎯', dateStart: '01/10/2025', dateEnd: '25/10/2025', status: 'live' },
-                { title: '!Champion', icon: '🏆', dateStart: '12/10/2025', dateEnd: '28/10/2025', status: 'live' }
+                { order: 1, title: '!Alone', icon: '🎮', dateStart: '07/10/2025', dateEnd: '23/10/2025 23:59', status: 'live' },
+                { order: 2, title: '!Low', icon: '💀', dateStart: '07/10/2025', dateEnd: '23/10/2025 23:59', status: 'live' },
+                { order: 3, title: '!Totodile', icon: '🐉', dateStart: '20/10/2025', dateEnd: '22/10/2025 23:59', status: 'live' },
+                { order: 4, title: '!Tepig', icon: '🔥', dateStart: '18/10/2025', dateEnd: '20/10/2025 23:59', status: 'toolate' },
+                { order: 5, title: '!Chikorita', icon: '🍃', dateStart: '16/10/2025', dateEnd: '18/10/2025 23:59', status: 'toolate' },
+                { order: 6, title: '!LoL Worlds', icon: '🌍', dateStart: '10/10/2025', dateEnd: '10/11/2025 23:59', status: 'live' },
+                { order: 7, title: '!Battle', icon: '⚔️', dateStart: '05/10/2025', dateEnd: '30/10/2025 23:59', status: 'live' },
+                { order: 8, title: '!Mission', icon: '🎯', dateStart: '01/10/2025', dateEnd: '25/10/2025 23:59', status: 'live' },
+                { order: 9, title: '!Champion', icon: '🏆', dateStart: '12/10/2025', dateEnd: '28/10/2025 23:59', status: 'live' }
             ];
             
             const allItems = [...defaultItems, ...defaultItems];
@@ -120,13 +168,19 @@
                 div.className = 'carousel-item';
                 
                 const statusText = item.status === 'live' ? 'LIVE' : 'Too late';
+                const hoursLeft = getHoursRemaining(item.dateEnd);
+                let countdownHTML = '';
+                if (hoursLeft !== null && hoursLeft > 0 && item.status === 'live') {
+                    countdownHTML = `<div class="countdown">⏱️ ${hoursLeft}h</div>`;
+                }
                 
                 div.innerHTML = `
                     <div class="icon">${item.icon}</div>
                     <div class="info">
                         <h3>${item.title}</h3>
                         <span class="status ${item.status}">${statusText}</span>
-                        <p class="date">${item.dateStart} - ${item.dateEnd}</p>
+                        ${countdownHTML}
+                        <p class="date">${item.dateStart} - ${item.dateEnd.split(' ')[0]}</p>
                     </div>
                 `;
                 
@@ -134,8 +188,12 @@
             });
         }
         
-        // Cargar items al iniciar
         loadCarouselItems();
+        
+        // Actualizar el contador cada minuto
+        setInterval(() => {
+            loadCarouselItems();
+        }, 60000);
     </script>
 </body>
 </html>
