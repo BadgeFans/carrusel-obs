@@ -27,17 +27,38 @@ export async function onRequest(context) {
       return new Response(`GitHub Error: ${data.error_description}`, { status: 400 });
     }
 
+    const content = {
+      token: data.access_token,
+      provider: 'github'
+    };
+
     const html = `
     <!DOCTYPE html>
     <html>
     <head>
       <title>Authentication Complete</title>
       <script>
-        window.opener.postMessage(
-          'authorization:github:success:${JSON.stringify(data)}',
-          window.location.origin
-        );
-        window.close();
+        (function() {
+          function receiveMessage(e) {
+            console.log('Received message:', e);
+            window.opener.postMessage(
+              'authorization:github:success:${JSON.stringify(content)}',
+              e.origin
+            );
+            window.removeEventListener('message', receiveMessage, false);
+          }
+          
+          window.addEventListener('message', receiveMessage, false);
+          
+          window.opener.postMessage(
+            'authorization:github:success:${JSON.stringify(content)}',
+            window.location.origin
+          );
+          
+          setTimeout(function() {
+            window.close();
+          }, 1000);
+        })();
       </script>
     </head>
     <body>
@@ -47,7 +68,10 @@ export async function onRequest(context) {
     `;
 
     return new Response(html, {
-      headers: { 'Content-Type': 'text/html' },
+      headers: { 
+        'Content-Type': 'text/html',
+        'Access-Control-Allow-Origin': '*'
+      },
     });
   } catch (error) {
     return new Response(`Error: ${error.message}`, { status: 500 });
