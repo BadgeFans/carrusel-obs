@@ -27,11 +27,6 @@ export async function onRequest(context) {
       return new Response(`GitHub Error: ${data.error_description}`, { status: 400 });
     }
 
-    const content = {
-      token: data.access_token,
-      provider: 'github'
-    };
-
     const html = `
     <!DOCTYPE html>
     <html>
@@ -39,38 +34,31 @@ export async function onRequest(context) {
       <title>Authentication Complete</title>
       <script>
         (function() {
-          function receiveMessage(e) {
-            console.log('Received message:', e);
+          if (window.opener) {
             window.opener.postMessage(
-              'authorization:github:success:${JSON.stringify(content)}',
-              e.origin
+              {
+                type: 'authorization:github:success',
+                token: '${data.access_token}',
+                provider: 'github'
+              },
+              '*'
             );
-            window.removeEventListener('message', receiveMessage, false);
           }
-          
-          window.addEventListener('message', receiveMessage, false);
-          
-          window.opener.postMessage(
-            'authorization:github:success:${JSON.stringify(content)}',
-            window.location.origin
-          );
-          
           setTimeout(function() {
             window.close();
-          }, 1000);
+          }, 500);
         })();
       </script>
     </head>
     <body>
-      <p>Authentication successful. This window will close automatically.</p>
+      <p>Authentication successful! Closing window...</p>
     </body>
     </html>
     `;
 
     return new Response(html, {
       headers: { 
-        'Content-Type': 'text/html',
-        'Access-Control-Allow-Origin': '*'
+        'Content-Type': 'text/html'
       },
     });
   } catch (error) {
