@@ -1,8 +1,8 @@
 backend:
   name: github
-  repo: TU-USUARIO/carrusel-obs
+  repo: BadgeFans/carrusel-obs
   branch: main
-  base_url: https://tu-sitio.pages.dev
+  base_url: https://carrusel-obs.pages.dev/
   auth_endpoint: /api/auth
 
 media_folder: "assets/images"
