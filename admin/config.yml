@@ -1,0 +1,19 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "assets/images"
+public_folder: "/assets/images"
+
+collections:
+  - name: "carousel"
+    label: "Carrusel Items"
+    folder: "content/carousel"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Nombre del Evento", name: "title", widget: "string"}
+      - {label: "Badge/Icono", name: "icon", widget: "image"}
+      - {label: "Fecha Inicio", name: "dateStart", widget: "string", hint: "Formato: DD/MM/YYYY"}
+      - {label: "Fecha Fin", name: "dateEnd", widget: "string", hint: "Formato: DD/MM/YYYY"}
+      - {label: "Estado", name: "status", widget: "select", options: ["live", "toolate"]}
