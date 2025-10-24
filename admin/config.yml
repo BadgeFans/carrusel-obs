@@ -1,7 +1,9 @@
 backend:
-  name: git-gateway
+  name: github
+  repo: TU-USUARIO/carrusel-obs
   branch: main
-  repo: TU-USUARIO/carrusel-obs  # Reemplaza BadgeFans
+  base_url: https://tu-sitio.pages.dev
+  auth_endpoint: /api/auth
 
 media_folder: "assets/images"
 public_folder: "/assets/images"
