@@ -12,8 +12,10 @@ collections:
     create: true
     slug: "{{slug}}"
     fields:
+      - {label: "Orden", name: "order", widget: "number", default: 1, value_type: "int", min: 1, max: 20}
       - {label: "Nombre del Evento", name: "title", widget: "string"}
       - {label: "Badge/Icono", name: "icon", widget: "image"}
       - {label: "Fecha Inicio", name: "dateStart", widget: "string", hint: "Formato: DD/MM/YYYY"}
-      - {label: "Fecha Fin", name: "dateEnd", widget: "string", hint: "Formato: DD/MM/YYYY"}
+      - {label: "Fecha Fin", name: "dateEnd", widget: "string", hint: "Formato: DD/MM/YYYY HH:MM", default: "DD/MM/YYYY 23:59"}
       - {label: "Estado", name: "status", widget: "select", options: ["live", "toolate"]}
+      - {label: "Mostrar Contador", name: "showCountdown", widget: "boolean", default: true}
