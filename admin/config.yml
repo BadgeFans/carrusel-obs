@@ -1,6 +1,7 @@
 backend:
   name: git-gateway
   branch: main
+  repo: TU-USUARIO/carrusel-obs  # Reemplaza TU-USUARIO
 
 media_folder: "assets/images"
 public_folder: "/assets/images"
