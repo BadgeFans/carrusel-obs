@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Items - Carrusel OBS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .hint {
+            font-size: 0.85em;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-top: 10px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .output {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px solid #667eea;
+        }
+
+        .output.show {
+            display: block;
+        }
+
+        .output h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .code-box {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin-bottom: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .copy-btn {
+            background: #28a745;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #218838;
+        }
+
+        .instructions {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .instructions h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            color: #856404;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .row {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Generador de Items</h1>
+        <p class="subtitle">Carrusel OBS - Admin Personalizado</p>
+
+        <form id="itemForm">
+            <div class="form-group">
+                <label for="order">🔢 Orden de Aparición</label>
+                <input type="number" id="order" name="order" min="1" max="20" value="1" required>
+                <div class="hint">Número del 1 al 20 (define el orden en el carrusel)</div>
+            </div>
+
+            <div class="form-group">
+                <label for="title">📝 Título del Evento</label>
+                <input type="text" id="title" name="title" placeholder="Ej: !Alone" required>
+                <div class="hint">El nombre que aparecerá en el carrusel</div>
+            </div>
+
+            <div class="form-group">
+                <label for="icon">🎨 Emoji o Icono</label>
+                <input type="text" id="icon" name="icon" placeholder="🎮" value="🎮" required>
+                <div class="hint">Un emoji como 🎮 💀 🐉 🔥 ⭐</div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label for="dateStart">📅 Fecha Inicio</label>
+                    <input type="date" id="dateStart" name="dateStart" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="dateEnd">📅 Fecha Fin</label>
+                    <input type="date" id="dateEnd" name="dateEnd" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="timeEnd">⏰ Hora de Fin</label>
+                <input type="time" id="timeEnd" name="timeEnd" value="23:59">
+                <div class="hint">Hora límite del evento</div>
+            </div>
+
+            <div class="form-group">
+                <label for="status">🚦 Estado del Evento</label>
+                <select id="status" name="status" required>
+                    <option value="live">🟢 LIVE (Activo)</option>
+                    <option value="toolate">🔴 Too Late (Terminado)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="showCountdown">⏱️ Mostrar Contador de Horas</label>
+                <select id="showCountdown" name="showCountdown" required>
+                    <option value="true">✅ Sí, mostrar contador</option>
+                    <option value="false">❌ No mostrar contador</option>
+                </select>
+            </div>
+
+            <button type="submit" class="button">✨ Generar Código</button>
+        </form>
+
+        <div id="output" class="output">
+            <h3>📋 Código Generado</h3>
+            <div class="code-box" id="codeBox"></div>
+            <button class="copy-btn" onclick="copyCode()">📋 Copiar Código</button>
+
+            <div class="instructions">
+                <h4>📌 Cómo usar este código:</h4>
+                <ol>
+                    <li>Click en "📋 Copiar Código" arriba</li>
+                    <li>Ve a tu GitHub: <code>tu-usuario/carrusel-obs</code></li>
+                    <li>Entra a la carpeta <code>content/carousel/</code></li>
+                    <li>Click en "Add file" → "Create new file"</li>
+                    <li>Nombre: <code id="fileName"></code></li>
+                    <li>Pega el código copiado</li>
+                    <li>Click en "Commit changes"</li>
+                    <li>¡Listo! En 1-2 minutos aparecerá en tu carrusel 🎉</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('itemForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Obtener valores del formulario
+            const order = document.getElementById('order').value;
+            const title = document.getElementById('title').value;
+            const icon = document.getElementById('icon').value;
+            const dateStart = document.getElementById('dateStart').value;
+            const dateEnd = document.getElementById('dateEnd').value;
+            const timeEnd = document.getElementById('timeEnd').value;
+            const status = document.getElementById('status').value;
+            const showCountdown = document.getElementById('showCountdown').value;
+            
+            // Formatear fechas a DD/MM/YYYY
+            const formatDate = (dateStr) => {
+                const date = new Date(dateStr);
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                return `${day}/${month}/${year}`;
+            };
+            
+            const formattedStart = formatDate(dateStart);
+            const formattedEnd = formatDate(dateEnd);
+            
+            // Generar el código .md
+            const code = `---
+order: ${order}
+title: ${title}
+icon: ${icon}
+dateStart: ${formattedStart}
+dateEnd: ${formattedEnd} ${timeEnd}
+status: ${status}
+showCountdown: ${showCountdown}
+---`;
+            
+            // Mostrar el código
+            document.getElementById('codeBox').textContent = code;
+            document.getElementById('output').classList.add('show');
+            
+            // Generar nombre de archivo sugerido
+            const fileName = title.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-') + '.md';
+            document.getElementById('fileName').textContent = fileName;
+            
+            // Scroll al resultado
+            document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        function copyCode() {
+            const code = document.getElementById('codeBox').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ ¡Copiado!';
+                btn.style.background = '#28a745';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
