@@ -15,9 +15,10 @@
     
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <script>
-        // Función mejorada para calcular tiempo restante con segundos
-        function getTimeRemaining(endDateStr) {
+        // Función para calcular horas restantes
+        function getHoursRemaining(endDateStr) {
             try {
+                // Parsear fecha en formato DD/MM/YYYY HH:MM o DD/MM/YYYY
                 const parts = endDateStr.trim().split(' ');
                 const dateParts = parts[0].split('/');
                 
@@ -29,48 +30,24 @@
                 }
                 
                 const endDate = new Date(
-                    parseInt(dateParts[2]),
-                    parseInt(dateParts[1]) - 1,
-                    parseInt(dateParts[0]),
+                    parseInt(dateParts[2]), // year
+                    parseInt(dateParts[1]) - 1, // month (0-indexed)
+                    parseInt(dateParts[0]), // day
                     hours,
-                    minutes,
-                    0
+                    minutes
                 );
                 
                 const now = new Date();
                 const diff = endDate - now;
                 
-                if (diff <= 0) return null;
+                if (diff <= 0) return null; // Evento terminado
                 
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const hoursLeft = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const secondsLeft = Math.floor((diff % (1000 * 60)) / 1000);
-                
-                // Formatear en inglés
-                if (days > 0) {
-                    return `${days}d ${hoursLeft}h ${minutesLeft}m remaining`;
-                } else {
-                    return `${hoursLeft}h ${minutesLeft}m ${secondsLeft}s remaining`;
-                }
+                const hoursRemaining = Math.floor(diff / (1000 * 60 * 60));
+                return hoursRemaining;
             } catch (e) {
                 console.error('Error parsing date:', e);
                 return null;
             }
-        }
-        
-        // Actualizar contadores sin recargar todo
-        function updateCountdowns() {
-            const countdowns = document.querySelectorAll('.countdown');
-            countdowns.forEach(countdown => {
-                const itemDiv = countdown.closest('.carousel-item');
-                if (itemDiv && itemDiv.dataset.endDate && itemDiv.dataset.showCountdown === 'true') {
-                    const timeText = getTimeRemaining(itemDiv.dataset.endDate);
-                    if (timeText) {
-                        countdown.textContent = `⏱️ ${timeText}`;
-                    }
-                }
-            });
         }
         
         // Cargar items desde el CMS
@@ -80,7 +57,6 @@
                 const files = await response.json();
                 
                 const track = document.getElementById('carousel-track');
-                track.innerHTML = ''; // Limpiar antes de cargar
                 const items = [];
                 
                 for (const file of files) {
@@ -90,7 +66,7 @@
                     const match = fileContent.match(/---\n([\s\S]*?)\n---/);
                     if (match) {
                         const frontmatter = match[1];
-                        const item = { order: 999 };
+                        const item = { order: 999 }; // default order
                         
                         frontmatter.split('\n').forEach(line => {
                             const colonIndex = line.indexOf(':');
@@ -119,6 +95,7 @@
                     );
                 }
                 
+                // Ordenar por el campo "order"
                 items.sort((a, b) => {
                     const orderA = parseInt(a.order) || 999;
                     const orderB = parseInt(b.order) || 999;
@@ -130,8 +107,6 @@
                 allItems.forEach(item => {
                     const div = document.createElement('div');
                     div.className = 'carousel-item';
-                    div.dataset.endDate = item.dateEnd;
-                    div.dataset.showCountdown = item.showCountdown;
                     
                     let iconHTML;
                     if (item.icon && (item.icon.startsWith('http') || item.icon.startsWith('/assets'))) {
@@ -142,13 +117,14 @@
                     
                     const statusText = item.status === 'live' ? 'LIVE' : 'Too late';
                     
+                    // Calcular horas restantes
                     let countdownHTML = '';
                     const showCountdown = item.showCountdown === 'true' || item.showCountdown === true;
                     
                     if (showCountdown && item.status === 'live') {
-                        const timeText = getTimeRemaining(item.dateEnd);
-                        if (timeText) {
-                            countdownHTML = `<div class="countdown">⏱️ ${timeText}</div>`;
+                        const hoursLeft = getHoursRemaining(item.dateEnd);
+                        if (hoursLeft !== null && hoursLeft > 0) {
+                            countdownHTML = `<div class="countdown">⏱️ ${hoursLeft}h restantes</div>`;
                         }
                     }
                     
@@ -159,3 +135,65 @@
                             <span class="status ${item.status}">${statusText}</span>
                             ${countdownHTML}
                             <p class="date">${item.dateStart} - ${item.dateEnd.split(' ')[0]}</p>
+                        </div>
+                    `;
+                    
+                    track.appendChild(div);
+                });
+                
+            } catch (error) {
+                console.error('Error cargando items:', error);
+                loadDefaultItems();
+            }
+        }
+        
+        function loadDefaultItems() {
+            const track = document.getElementById('carousel-track');
+            const defaultItems = [
+                { order: 1, title: '!Alone', icon: '🎮', dateStart: '07/10/2025', dateEnd: '23/10/2025 23:59', status: 'live' },
+                { order: 2, title: '!Low', icon: '💀', dateStart: '07/10/2025', dateEnd: '23/10/2025 23:59', status: 'live' },
+                { order: 3, title: '!Totodile', icon: '🐉', dateStart: '20/10/2025', dateEnd: '22/10/2025 23:59', status: 'live' },
+                { order: 4, title: '!Tepig', icon: '🔥', dateStart: '18/10/2025', dateEnd: '20/10/2025 23:59', status: 'toolate' },
+                { order: 5, title: '!Chikorita', icon: '🍃', dateStart: '16/10/2025', dateEnd: '18/10/2025 23:59', status: 'toolate' },
+                { order: 6, title: '!LoL Worlds', icon: '🌍', dateStart: '10/10/2025', dateEnd: '10/11/2025 23:59', status: 'live' },
+                { order: 7, title: '!Battle', icon: '⚔️', dateStart: '05/10/2025', dateEnd: '30/10/2025 23:59', status: 'live' },
+                { order: 8, title: '!Mission', icon: '🎯', dateStart: '01/10/2025', dateEnd: '25/10/2025 23:59', status: 'live' },
+                { order: 9, title: '!Champion', icon: '🏆', dateStart: '12/10/2025', dateEnd: '28/10/2025 23:59', status: 'live' }
+            ];
+            
+            const allItems = [...defaultItems, ...defaultItems];
+            
+            allItems.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'carousel-item';
+                
+                const statusText = item.status === 'live' ? 'LIVE' : 'Too late';
+                const hoursLeft = getHoursRemaining(item.dateEnd);
+                let countdownHTML = '';
+                if (hoursLeft !== null && hoursLeft > 0 && item.status === 'live') {
+                    countdownHTML = `<div class="countdown">⏱️ ${hoursLeft}h</div>`;
+                }
+                
+                div.innerHTML = `
+                    <div class="icon">${item.icon}</div>
+                    <div class="info">
+                        <h3>${item.title}</h3>
+                        <span class="status ${item.status}">${statusText}</span>
+                        ${countdownHTML}
+                        <p class="date">${item.dateStart} - ${item.dateEnd.split(' ')[0]}</p>
+                    </div>
+                `;
+                
+                track.appendChild(div);
+            });
+        }
+        
+        loadCarouselItems();
+        
+        // Actualizar el contador cada minuto
+        setInterval(() => {
+            loadCarouselItems();
+        }, 60000);
+    </script>
+</body>
+</html>
