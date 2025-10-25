@@ -21,52 +21,78 @@
     }
 
     .gallery {
-      position: absolute;
+      position: relative;
       width: 996px;
       height: 350px;
-      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 1000px;
     }
 
     .cards {
-      position: absolute;
-      width: 280px;
-      height: 280px;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      position: relative;
+      width: 996px;
+      height: 350px;
       list-style: none;
+      transform-style: preserve-3d;
     }
 
     .cards li {
-      width: 280px;
-      height: 280px;
       position: absolute;
+      width: 996px;
+      height: 350px;
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      top: 0;
-      left: 0;
-      border-radius: 1rem;
-      box-shadow: 0 0 30px rgba(168, 85, 247, 0.6),
-                  0 0 60px rgba(168, 85, 247, 0.4),
-                  0 8px 32px rgba(0, 0, 0, 0.4);
-      border: 2px solid rgba(168, 85, 247, 0.5);
-      transition: all 0.3s ease;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      opacity: 0;
+      transform: translateX(100px) scale(0.8) rotateY(-5deg);
     }
 
-    .cards li::before {
+    /* Card protagonista (activa) */
+    .cards li.active {
+      opacity: 1;
+      transform: translateX(0) scale(1) rotateY(0deg);
+      z-index: 10;
+      box-shadow: 0 0 40px rgba(168, 85, 247, 0.8),
+                  0 0 80px rgba(168, 85, 247, 0.5),
+                  0 20px 60px rgba(0, 0, 0, 0.6);
+      border: 3px solid rgba(168, 85, 247, 0.6);
+    }
+
+    /* Card siguiente (bosquejo detrás a la derecha) */
+    .cards li.next {
+      opacity: 0.4;
+      transform: translateX(50px) scale(0.85) rotateY(-8deg);
+      z-index: 5;
+      filter: brightness(0.6);
+    }
+
+    /* Card anterior (bosquejo detrás a la izquierda) */
+    .cards li.prev {
+      opacity: 0.3;
+      transform: translateX(-50px) scale(0.85) rotateY(8deg);
+      z-index: 4;
+      filter: brightness(0.5);
+    }
+
+    /* Efecto glow morado en card activa */
+    .cards li.active::before {
       content: '';
       position: absolute;
-      top: -3px;
-      left: -3px;
-      right: -3px;
-      bottom: -3px;
+      top: -4px;
+      left: -4px;
+      right: -4px;
+      bottom: -4px;
       background: linear-gradient(45deg, #a855f7, #ec4899, #8b5cf6, #a855f7);
-      background-size: 300% 300%;
-      border-radius: 1rem;
+      background-size: 400% 400%;
+      border-radius: 18px;
       z-index: -1;
-      opacity: 0.7;
-      filter: blur(8px);
+      opacity: 0.8;
+      filter: blur(12px);
       animation: gradientShift 3s ease infinite;
     }
 
@@ -75,28 +101,29 @@
       50% { background-position: 100% 50%; }
     }
 
+    /* Partículas decorativas moradas */
     body::before,
     body::after {
       content: '';
       position: fixed;
-      width: 400px;
-      height: 400px;
+      width: 300px;
+      height: 300px;
       border-radius: 50%;
       pointer-events: none;
       z-index: -1;
     }
 
     body::before {
-      background: radial-gradient(circle, rgba(168, 85, 247, 0.2) 0%, transparent 70%);
-      top: -200px;
-      left: -200px;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 70%);
+      top: -100px;
+      left: -100px;
       animation: float 20s ease-in-out infinite;
     }
 
     body::after {
-      background: radial-gradient(circle, rgba(236, 72, 153, 0.2) 0%, transparent 70%);
-      bottom: -200px;
-      right: -200px;
+      background: radial-gradient(circle, rgba(236, 72, 153, 0.15) 0%, transparent 70%);
+      bottom: -100px;
+      right: -100px;
       animation: float 25s ease-in-out infinite reverse;
     }
 
@@ -112,8 +139,6 @@
     <ul class="cards" id="cardsList"></ul>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script>
     // Cargar items desde content/banner/
     async function loadBannerItems() {
@@ -162,105 +187,60 @@
 
     function getExampleData() {
       return [
-        { image: 'https://assets.codepen.io/16327/portrait-number-01.png', order: 1 },
-        { image: 'https://assets.codepen.io/16327/portrait-number-02.png', order: 2 },
-        { image: 'https://assets.codepen.io/16327/portrait-number-03.png', order: 3 },
-        { image: 'https://assets.codepen.io/16327/portrait-number-04.png', order: 4 },
-        { image: 'https://assets.codepen.io/16327/portrait-number-05.png', order: 5 },
-        { image: 'https://assets.codepen.io/16327/portrait-number-06.png', order: 6 },
-        { image: 'https://assets.codepen.io/16327/portrait-number-07.png', order: 7 },
+        { image: 'https://assets.codepen.io/16327/portrait-number-01.png', order: 1, title: 'Card 1' },
+        { image: 'https://assets.codepen.io/16327/portrait-number-02.png', order: 2, title: 'Card 2' },
+        { image: 'https://assets.codepen.io/16327/portrait-number-03.png', order: 3, title: 'Card 3' },
+        { image: 'https://assets.codepen.io/16327/portrait-number-04.png', order: 4, title: 'Card 4' },
+        { image: 'https://assets.codepen.io/16327/portrait-number-05.png', order: 5, title: 'Card 5' },
+        { image: 'https://assets.codepen.io/16327/portrait-number-06.png', order: 6, title: 'Card 6' },
+        { image: 'https://assets.codepen.io/16327/portrait-number-07.png', order: 7, title: 'Card 7' },
       ];
     }
 
+    let currentIndex = 0;
+    let items = [];
+    let cards = [];
+
     async function initCarousel() {
-      const items = await loadBannerItems();
+      items = await loadBannerItems();
       const cardsList = document.getElementById('cardsList');
       
-      [...items, ...items].forEach(item => {
+      // Crear todas las cards
+      items.forEach((item, index) => {
         const li = document.createElement('li');
         li.style.backgroundImage = `url(${item.image})`;
+        li.dataset.index = index;
         cardsList.appendChild(li);
+        cards.push(li);
       });
       
-      startAnimation();
+      // Iniciar carrusel
+      updateCards();
+      setInterval(nextCard, 4000); // Cambiar cada 4 segundos
     }
 
-    function startAnimation() {
-      gsap.registerPlugin(ScrollTrigger);
+    function updateCards() {
+      const total = cards.length;
       
-      const spacing = 0.15;
-      const cards = gsap.utils.toArray('.cards li');
-      
-      gsap.set('.cards li', {xPercent: 500, opacity: 0, scale: 0.5});
-      
-      const animateFunc = element => {
-        const tl = gsap.timeline();
-        tl.fromTo(element, 
-          {scale: 0.5, opacity: 0}, 
-          {scale: 1, opacity: 1, zIndex: 100, duration: 0.6, yoyo: true, repeat: 1, ease: "power2.inOut", immediateRender: false}
-        ).fromTo(element, 
-          {xPercent: 500}, 
-          {xPercent: -500, duration: 1.2, ease: "none", immediateRender: false}, 
-          0
-        );
-        return tl;
-      };
-      
-      const seamlessLoop = buildSeamlessLoop(cards, spacing, animateFunc);
-      const playhead = {offset: 0};
-      const wrapTime = gsap.utils.wrap(0, seamlessLoop.duration());
-      
-      gsap.to(playhead, {
-        offset: seamlessLoop.duration(),
-        duration: seamlessLoop.duration() * 4,
-        ease: "none",
-        repeat: -1,
-        onUpdate() {
-          seamlessLoop.time(wrapTime(playhead.offset));
+      cards.forEach((card, index) => {
+        card.classList.remove('active', 'next', 'prev');
+        
+        if (index === currentIndex) {
+          card.classList.add('active');
+        } else if (index === (currentIndex + 1) % total) {
+          card.classList.add('next');
+        } else if (index === (currentIndex - 1 + total) % total) {
+          card.classList.add('prev');
         }
       });
     }
 
-    function buildSeamlessLoop(items, spacing, animateFunc) {
-      let overlap = Math.ceil(1 / spacing);
-      let startTime = items.length * spacing + 0.5;
-      let loopTime = (items.length + overlap) * spacing + 1;
-      let rawSequence = gsap.timeline({paused: true});
-      let seamlessLoop = gsap.timeline({
-        paused: true,
-        repeat: -1,
-        onRepeat() {
-          this._time === this._dur && (this._tTime += this._dur - 0.01);
-        }
-      });
-      
-      let l = items.length + overlap * 2;
-      
-      for (let i = 0; i < l; i++) {
-        let index = i % items.length;
-        let time = i * spacing;
-        rawSequence.add(animateFunc(items[index]), time);
-        i <= items.length && seamlessLoop.add("label" + i, time);
-      }
-      
-      rawSequence.time(startTime);
-      seamlessLoop.to(rawSequence, {
-        time: loopTime,
-        duration: loopTime - startTime,
-        ease: "none"
-      }).fromTo(rawSequence, 
-        {time: overlap * spacing + 1}, 
-        {
-          time: startTime,
-          duration: startTime - (overlap * spacing + 1),
-          immediateRender: false,
-          ease: "none"
-        }
-      );
-      
-      return seamlessLoop;
+    function nextCard() {
+      currentIndex = (currentIndex + 1) % cards.length;
+      updateCards();
     }
 
+    // Iniciar cuando cargue la página
     window.addEventListener('DOMContentLoaded', initCarousel);
   </script>
 </body>
