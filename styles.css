@@ -21,7 +21,7 @@ body {
 .carousel-track {
     display: flex;
     flex-direction: column;
-    animation: scrollUp 30s linear infinite;
+    animation: scrollUp 50s linear infinite;
 }
 
 @keyframes scrollUp {
@@ -230,3 +230,4 @@ body {
         transform: translateY(-20px);
     }
 }
+
