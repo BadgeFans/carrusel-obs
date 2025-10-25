@@ -48,15 +48,15 @@
                 
                 if (items.length === 0) {
                     items.push(
-                        { order: 1, title: '!Alone', icon: '🎮', dateStart: '07/10/2025', dateEnd: '23/10/2025 23:59', status: 'live' },
-                        { order: 2, title: '!Low', icon: '💀', dateStart: '07/10/2025', dateEnd: '23/10/2025 23:59', status: 'live' },
-                        { order: 3, title: '!Totodile', icon: '🐉', dateStart: '20/10/2025', dateEnd: '22/10/2025 23:59', status: 'live' },
-                        { order: 4, title: '!Tepig', icon: '🔥', dateStart: '18/10/2025', dateEnd: '20/10/2025 23:59', status: 'toolate' },
-                        { order: 5, title: '!Chikorita', icon: '🍃', dateStart: '16/10/2025', dateEnd: '18/10/2025 23:59', status: 'toolate' },
-                        { order: 6, title: '!LoL Worlds', icon: '🌍', dateStart: '10/10/2025', dateEnd: '10/11/2025 23:59', status: 'live' },
-                        { order: 7, title: '!Battle', icon: '⚔️', dateStart: '05/10/2025', dateEnd: '30/10/2025 23:59', status: 'live' },
-                        { order: 8, title: '!Mission', icon: '🎯', dateStart: '01/10/2025', dateEnd: '25/10/2025 23:59', status: 'live' },
-                        { order: 9, title: '!Champion', icon: '🏆', dateStart: '12/10/2025', dateEnd: '28/10/2025 23:59', status: 'live' }
+                        { order: 1, title: '!Alone', icon: '🎮', dateStart: '07/10/2025', dateEnd: '23/10/2025 23:59', status: 'live', type: 'badge' },
+                        { order: 2, title: '!Low', icon: '💀', dateStart: '07/10/2025', dateEnd: '23/10/2025 23:59', status: 'live', type: 'emote' },
+                        { order: 3, title: '!Totodile', icon: '🐉', dateStart: '20/10/2025', dateEnd: '22/10/2025 23:59', status: 'live', type: 'badge' },
+                        { order: 4, title: '!Tepig', icon: '🔥', dateStart: '18/10/2025', dateEnd: '20/10/2025 23:59', status: 'toolate', type: 'emote' },
+                        { order: 5, title: '!Chikorita', icon: '🍃', dateStart: '16/10/2025', dateEnd: '18/10/2025 23:59', status: 'toolate', type: 'badge' },
+                        { order: 6, title: '!LoL Worlds', icon: '🌍', dateStart: '10/10/2025', dateEnd: '10/11/2025 23:59', status: 'live', type: 'badge' },
+                        { order: 7, title: '!Battle', icon: '⚔️', dateStart: '05/10/2025', dateEnd: '30/10/2025 23:59', status: 'live', type: 'emote' },
+                        { order: 8, title: '!Mission', icon: '🎯', dateStart: '01/10/2025', dateEnd: '25/10/2025 23:59', status: 'live', type: 'badge' },
+                        { order: 9, title: '!Champion', icon: '🏆', dateStart: '12/10/2025', dateEnd: '28/10/2025 23:59', status: 'live', type: 'emote' }
                     );
                 }
                 
@@ -82,11 +82,18 @@
                     
                     const statusText = item.status === 'live' ? 'LIVE' : 'Too late';
                     
+                    // Generar etiqueta de tipo (Badge o Emote)
+                    const typeText = item.type === 'badge' ? 'Badge' : 'Emote';
+                    const typeClass = item.type === 'badge' ? 'badge' : 'emote';
+                    
                     div.innerHTML = `
                         <div class="icon">${iconHTML}</div>
                         <div class="info">
                             <h3>${item.title}</h3>
-                            <span class="status ${item.status}">${statusText}</span>
+                            <div class="tags">
+                                <span class="status ${item.status}">${statusText}</span>
+                                <span class="type ${typeClass}">${typeText}</span>
+                            </div>
                             <p class="date">${item.dateStart} - ${item.dateEnd.split(' ')[0]}</p>
                         </div>
                     `;
