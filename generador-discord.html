@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador Discord Quests v4.0</title>
+    <title>Generador Discord Quests v5.0</title>
     <style>
         * {
             margin: 0;
@@ -260,7 +260,7 @@
     <div class="container">
         <h1>🎮 Generador Discord Quests</h1>
         <p class="subtitle">Carrusel Discord - Admin Personalizado</p>
-        <p class="version">v4.0 - Con estados Play Game / Watch Video</p>
+        <p class="version">v5.0 - Con etiquetas Orbs/Deco</p>
 
         <form id="itemForm">
             <div class="form-group">
@@ -331,12 +331,22 @@
                 <div class="hint">Hora límite del quest</div>
             </div>
 
-            <div class="form-group">
-                <label for="status">🚦 Tipo de Quest</label>
-                <select id="status" name="status" required>
-                    <option value="live">🎮 Play Game</option>
-                    <option value="toolate">📺 Watch Video</option>
-                </select>
+            <div class="row">
+                <div class="form-group">
+                    <label for="status">🚦 Tipo de Quest</label>
+                    <select id="status" name="status" required>
+                        <option value="live">🎮 Play Game</option>
+                        <option value="toolate">📺 Watch Video</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="type">🏷️ Tipo de Recompensa</label>
+                    <select id="type" name="type" required>
+                        <option value="orbs">🔵 Orbs</option>
+                        <option value="deco">💛 Deco</option>
+                    </select>
+                </div>
             </div>
 
             <button type="submit" class="button">✨ Generar Código</button>
@@ -393,6 +403,7 @@
             const dateEnd = document.getElementById('dateEnd').value;
             const timeEnd = document.getElementById('timeEnd').value;
             const status = document.getElementById('status').value;
+            const type = document.getElementById('type').value;
             
             let icon;
             if (currentIconType === 'emoji') {
@@ -423,6 +434,7 @@ icon: ${icon}
 dateStart: ${formattedStart}
 dateEnd: ${formattedEnd} ${timeEnd}
 status: ${status}
+type: ${type}
 ---`;
             
             document.getElementById('codeBox').textContent = code;
