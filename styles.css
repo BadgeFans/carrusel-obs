@@ -155,12 +155,35 @@ body {
     box-shadow: 0 0 15px rgba(255, 51, 102, 0.6);
 }
 
+/* Contenedor para fecha y contador juntos */
+.date-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    z-index: 2;
+    position: relative;
+}
+
 .date {
     color: rgba(255, 255, 255, 0.75);
     font-size: 12px;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
     z-index: 2;
     position: relative;
+    flex-shrink: 0;
+}
+
+.countdown {
+    color: #00ff88;
+    font-size: 10px;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.6);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .carousel-item:hover {
@@ -198,15 +221,4 @@ body {
     50% {
         transform: translateY(-20px);
     }
-}
-
-.countdown {
-    color: #00ff88;
-    font-size: 11px;
-    font-weight: bold;
-    margin: 5px 0;
-    text-shadow: 0 0 10px rgba(0, 255, 136, 0.6);
-    display: flex;
-    align-items: center;
-    gap: 5px;
 }
