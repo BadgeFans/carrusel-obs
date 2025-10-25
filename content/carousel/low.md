@@ -1,7 +1,9 @@
 ---
-title: Low
-icon: /assets/images/low.png
-dateStart: 22/10/2025
-dateEnd: 22/10/2025
-status: toolate
+order: 2
+title: LOW
+icon: https://i.imgur.com/ismaPXN.png
+dateStart: 14/10/2025
+dateEnd: 15/10/2025 23:59
+status: live
+showCountdown: true
 ---
