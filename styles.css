@@ -161,7 +161,7 @@ body {
     box-shadow: 0 0 15px rgba(255, 51, 102, 0.6);
 }
 
-/* Etiquetas de tipo: Badge y Emote */
+/* Etiquetas de tipo: Badge y Emote (Twitch) */
 .type {
     display: inline-block;
     padding: 5px 14px;
@@ -181,6 +181,19 @@ body {
 }
 
 .type.emote {
+    background: #fbbf24;
+    color: #000;
+    box-shadow: 0 0 15px rgba(251, 191, 36, 0.6);
+}
+
+/* Etiquetas de tipo: Orbs y Deco (Discord) */
+.type.orbs {
+    background: #3b82f6;
+    color: #fff;
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+}
+
+.type.deco {
     background: #fbbf24;
     color: #000;
     box-shadow: 0 0 15px rgba(251, 191, 36, 0.6);
@@ -230,5 +243,3 @@ body {
         transform: translateY(-20px);
     }
 }
-
-
