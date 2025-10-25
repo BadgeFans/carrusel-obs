@@ -15,49 +15,6 @@
     
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <script>
-        // Función para calcular tiempo restante completo
-        function getTimeRemaining(endDateStr) {
-            try {
-                const parts = endDateStr.trim().split(' ');
-                const dateParts = parts[0].split('/');
-                
-                let hours = 23, minutes = 59;
-                if (parts.length > 1) {
-                    const timeParts = parts[1].split(':');
-                    hours = parseInt(timeParts[0]) || 23;
-                    minutes = parseInt(timeParts[1]) || 59;
-                }
-                
-                const endDate = new Date(
-                    parseInt(dateParts[2]),
-                    parseInt(dateParts[1]) - 1,
-                    parseInt(dateParts[0]),
-                    hours,
-                    minutes,
-                    0
-                );
-                
-                const now = new Date();
-                const diff = endDate - now;
-                
-                if (diff <= 0) return null;
-                
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const hoursLeft = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const secondsLeft = Math.floor((diff % (1000 * 60)) / 1000);
-                
-                if (days > 0) {
-                    return `${days}d ${hoursLeft}h ${minutesLeft}m remaining`;
-                } else {
-                    return `${hoursLeft}h ${minutesLeft}m ${secondsLeft}s remaining`;
-                }
-            } catch (e) {
-                console.error('Error parsing date:', e);
-                return null;
-            }
-        }
-        
         // Cargar items desde el CMS
         async function loadCarouselItems() {
             try {
@@ -91,15 +48,15 @@
                 
                 if (items.length === 0) {
                     items.push(
-                        { order: 1, title: '!Alone', icon: '🎮', dateStart: '07/10/2025', dateEnd: '23/10/2025 23:59', status: 'live', showCountdown: 'true' },
-                        { order: 2, title: '!Low', icon: '💀', dateStart: '07/10/2025', dateEnd: '23/10/2025 23:59', status: 'live', showCountdown: 'true' },
-                        { order: 3, title: '!Totodile', icon: '🐉', dateStart: '20/10/2025', dateEnd: '22/10/2025 23:59', status: 'live', showCountdown: 'true' },
-                        { order: 4, title: '!Tepig', icon: '🔥', dateStart: '18/10/2025', dateEnd: '20/10/2025 23:59', status: 'toolate', showCountdown: 'false' },
-                        { order: 5, title: '!Chikorita', icon: '🍃', dateStart: '16/10/2025', dateEnd: '18/10/2025 23:59', status: 'toolate', showCountdown: 'false' },
-                        { order: 6, title: '!LoL Worlds', icon: '🌍', dateStart: '10/10/2025', dateEnd: '10/11/2025 23:59', status: 'live', showCountdown: 'true' },
-                        { order: 7, title: '!Battle', icon: '⚔️', dateStart: '05/10/2025', dateEnd: '30/10/2025 23:59', status: 'live', showCountdown: 'true' },
-                        { order: 8, title: '!Mission', icon: '🎯', dateStart: '01/10/2025', dateEnd: '25/10/2025 23:59', status: 'live', showCountdown: 'true' },
-                        { order: 9, title: '!Champion', icon: '🏆', dateStart: '12/10/2025', dateEnd: '28/10/2025 23:59', status: 'live', showCountdown: 'true' }
+                        { order: 1, title: '!Alone', icon: '🎮', dateStart: '07/10/2025', dateEnd: '23/10/2025 23:59', status: 'live' },
+                        { order: 2, title: '!Low', icon: '💀', dateStart: '07/10/2025', dateEnd: '23/10/2025 23:59', status: 'live' },
+                        { order: 3, title: '!Totodile', icon: '🐉', dateStart: '20/10/2025', dateEnd: '22/10/2025 23:59', status: 'live' },
+                        { order: 4, title: '!Tepig', icon: '🔥', dateStart: '18/10/2025', dateEnd: '20/10/2025 23:59', status: 'toolate' },
+                        { order: 5, title: '!Chikorita', icon: '🍃', dateStart: '16/10/2025', dateEnd: '18/10/2025 23:59', status: 'toolate' },
+                        { order: 6, title: '!LoL Worlds', icon: '🌍', dateStart: '10/10/2025', dateEnd: '10/11/2025 23:59', status: 'live' },
+                        { order: 7, title: '!Battle', icon: '⚔️', dateStart: '05/10/2025', dateEnd: '30/10/2025 23:59', status: 'live' },
+                        { order: 8, title: '!Mission', icon: '🎯', dateStart: '01/10/2025', dateEnd: '25/10/2025 23:59', status: 'live' },
+                        { order: 9, title: '!Champion', icon: '🏆', dateStart: '12/10/2025', dateEnd: '28/10/2025 23:59', status: 'live' }
                     );
                 }
                 
@@ -115,9 +72,6 @@
                 allItems.forEach(item => {
                     const div = document.createElement('div');
                     div.className = 'carousel-item';
-                    div.dataset.endDate = item.dateEnd;
-                    div.dataset.showCountdown = item.showCountdown;
-                    div.dataset.status = item.status;
                     
                     let iconHTML;
                     if (item.icon && (item.icon.startsWith('http') || item.icon.startsWith('/assets'))) {
@@ -128,25 +82,12 @@
                     
                     const statusText = item.status === 'live' ? 'LIVE' : 'Too late';
                     
-                    let countdownHTML = '';
-                    const showCountdown = item.showCountdown === 'true' || item.showCountdown === true;
-                    
-                    if (showCountdown && item.status === 'live') {
-                        const timeText = getTimeRemaining(item.dateEnd);
-                        if (timeText) {
-                            countdownHTML = `<div class="countdown">⏱️ ${timeText}</div>`;
-                        }
-                    }
-                    
                     div.innerHTML = `
                         <div class="icon">${iconHTML}</div>
                         <div class="info">
                             <h3>${item.title}</h3>
                             <span class="status ${item.status}">${statusText}</span>
-                            <div class="date-row">
-                                <p class="date">${item.dateStart} - ${item.dateEnd.split(' ')[0]}</p>
-                                ${countdownHTML}
-                            </div>
+                            <p class="date">${item.dateStart} - ${item.dateEnd.split(' ')[0]}</p>
                         </div>
                     `;
                     
@@ -158,32 +99,9 @@
             }
         }
         
-        // Actualizar solo contadores cada segundo
-        function updateCountdowns() {
-            const items = document.querySelectorAll('.carousel-item');
-            items.forEach(item => {
-                const endDate = item.dataset.endDate;
-                const showCountdown = item.dataset.showCountdown === 'true';
-                const status = item.dataset.status;
-                
-                if (showCountdown && status === 'live' && endDate) {
-                    const countdown = item.querySelector('.countdown');
-                    if (countdown) {
-                        const timeText = getTimeRemaining(endDate);
-                        if (timeText) {
-                            countdown.textContent = `⏱️ ${timeText}`;
-                        }
-                    }
-                }
-            });
-        }
-        
         loadCarouselItems();
         
-        // Actualizar contadores cada segundo
-        setInterval(updateCountdowns, 1000);
-        
-        // Recargar datos completos cada 5 minutos
+        // Recargar datos cada 5 minutos
         setInterval(loadCarouselItems, 300000);
     </script>
 </body>
