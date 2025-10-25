@@ -143,8 +143,10 @@
                         <div class="info">
                             <h3>${item.title}</h3>
                             <span class="status ${item.status}">${statusText}</span>
-                            ${countdownHTML}
-                            <p class="date">${item.dateStart} - ${item.dateEnd.split(' ')[0]}</p>
+                            <div class="date-row">
+                                <p class="date">${item.dateStart} - ${item.dateEnd.split(' ')[0]}</p>
+                                ${countdownHTML}
+                            </div>
                         </div>
                     `;
                     
