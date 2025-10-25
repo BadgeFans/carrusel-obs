@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Items - Carrusel OBS v3.0</title>
+    <title>Generador de Items - Carrusel OBS v4.0</title>
     <style>
         * {
             margin: 0;
@@ -260,7 +260,7 @@
     <div class="container">
         <h1>🎮 Generador de Items</h1>
         <p class="subtitle">Carrusel OBS - Admin Personalizado</p>
-        <p class="version">v3.0 - Limpio y sin problemas de fechas</p>
+        <p class="version">v4.0 - Con etiquetas Badge/Emote</p>
 
         <form id="itemForm">
             <div class="form-group">
@@ -331,12 +331,22 @@
                 <div class="hint">Hora límite del evento</div>
             </div>
 
-            <div class="form-group">
-                <label for="status">🚦 Estado del Evento</label>
-                <select id="status" name="status" required>
-                    <option value="live">🟢 LIVE (Activo)</option>
-                    <option value="toolate">🔴 Too Late (Terminado)</option>
-                </select>
+            <div class="row">
+                <div class="form-group">
+                    <label for="status">🚦 Estado del Evento</label>
+                    <select id="status" name="status" required>
+                        <option value="live">🟢 LIVE (Activo)</option>
+                        <option value="toolate">🔴 Too Late (Terminado)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="type">🏷️ Tipo de Recompensa</label>
+                    <select id="type" name="type" required>
+                        <option value="badge">💜 Badge</option>
+                        <option value="emote">💛 Emote</option>
+                    </select>
+                </div>
             </div>
 
             <button type="submit" class="button">✨ Generar Código</button>
@@ -393,6 +403,7 @@
             const dateEnd = document.getElementById('dateEnd').value;
             const timeEnd = document.getElementById('timeEnd').value;
             const status = document.getElementById('status').value;
+            const type = document.getElementById('type').value;
             
             let icon;
             if (currentIconType === 'emoji') {
@@ -405,9 +416,8 @@
                 }
             }
             
-            // Formatear fechas CORRECTAMENTE sin problemas de timezone
             const formatDate = (dateStr) => {
-                const parts = dateStr.split('-'); // YYYY-MM-DD
+                const parts = dateStr.split('-');
                 const day = parts[2];
                 const month = parts[1];
                 const year = parts[0];
@@ -417,7 +427,6 @@
             const formattedStart = formatDate(dateStart);
             const formattedEnd = formatDate(dateEnd);
             
-            // Generar el código .md SIN showCountdown
             const code = `---
 order: ${order}
 title: ${title}
@@ -425,6 +434,7 @@ icon: ${icon}
 dateStart: ${formattedStart}
 dateEnd: ${formattedEnd} ${timeEnd}
 status: ${status}
+type: ${type}
 ---`;
             
             document.getElementById('codeBox').textContent = code;
