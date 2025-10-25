@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Banner Carrusel OBS - 996x350</title>
+  <title>Banner Carrusel OBS</title>
   <style>
     * {
       box-sizing: border-box;
@@ -16,7 +16,6 @@
       width: 996px;
       height: 350px;
       overflow: hidden;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       position: relative;
     }
 
@@ -27,7 +26,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      perspective: 1000px;
     }
 
     .cards {
@@ -35,7 +33,6 @@
       width: 996px;
       height: 350px;
       list-style: none;
-      transform-style: preserve-3d;
     }
 
     .cards li {
@@ -49,13 +46,12 @@
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
       transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
       opacity: 0;
-      transform: translateX(100px) scale(0.8) rotateY(-5deg);
+      transform: scale(0.95);
     }
 
-    /* Card protagonista (activa) */
     .cards li.active {
       opacity: 1;
-      transform: translateX(0) scale(1) rotateY(0deg);
+      transform: scale(1);
       z-index: 10;
       box-shadow: 0 0 40px rgba(168, 85, 247, 0.8),
                   0 0 80px rgba(168, 85, 247, 0.5),
@@ -63,23 +59,6 @@
       border: 3px solid rgba(168, 85, 247, 0.6);
     }
 
-    /* Card siguiente (bosquejo detrás a la derecha) */
-    .cards li.next {
-      opacity: 0.4;
-      transform: translateX(50px) scale(0.85) rotateY(-8deg);
-      z-index: 5;
-      filter: brightness(0.6);
-    }
-
-    /* Card anterior (bosquejo detrás a la izquierda) */
-    .cards li.prev {
-      opacity: 0.3;
-      transform: translateX(-50px) scale(0.85) rotateY(8deg);
-      z-index: 4;
-      filter: brightness(0.5);
-    }
-
-    /* Efecto glow morado en card activa */
     .cards li.active::before {
       content: '';
       position: absolute;
@@ -101,7 +80,6 @@
       50% { background-position: 100% 50%; }
     }
 
-    /* Partículas decorativas moradas */
     body::before,
     body::after {
       content: '';
@@ -140,7 +118,6 @@
   </div>
 
   <script>
-    // Cargar items desde content/banner/
     async function loadBannerItems() {
       try {
         const response = await fetch('https://api.github.com/repos/TU-USUARIO/carrusel-obs/contents/content/banner');
@@ -158,7 +135,6 @@
         
         return items.sort((a, b) => a.order - b.order);
       } catch (error) {
-        console.log('Usando datos de ejemplo');
         return getExampleData();
       }
     }
@@ -180,20 +156,19 @@
       
       return {
         order: parseInt(data.order) || 0,
-        image: data.image || '',
-        title: data.title || ''
+        image: data.image || ''
       };
     }
 
     function getExampleData() {
       return [
-        { image: 'https://assets.codepen.io/16327/portrait-number-01.png', order: 1, title: 'Card 1' },
-        { image: 'https://assets.codepen.io/16327/portrait-number-02.png', order: 2, title: 'Card 2' },
-        { image: 'https://assets.codepen.io/16327/portrait-number-03.png', order: 3, title: 'Card 3' },
-        { image: 'https://assets.codepen.io/16327/portrait-number-04.png', order: 4, title: 'Card 4' },
-        { image: 'https://assets.codepen.io/16327/portrait-number-05.png', order: 5, title: 'Card 5' },
-        { image: 'https://assets.codepen.io/16327/portrait-number-06.png', order: 6, title: 'Card 6' },
-        { image: 'https://assets.codepen.io/16327/portrait-number-07.png', order: 7, title: 'Card 7' },
+        { image: 'https://assets.codepen.io/16327/portrait-number-01.png', order: 1 },
+        { image: 'https://assets.codepen.io/16327/portrait-number-02.png', order: 2 },
+        { image: 'https://assets.codepen.io/16327/portrait-number-03.png', order: 3 },
+        { image: 'https://assets.codepen.io/16327/portrait-number-04.png', order: 4 },
+        { image: 'https://assets.codepen.io/16327/portrait-number-05.png', order: 5 },
+        { image: 'https://assets.codepen.io/16327/portrait-number-06.png', order: 6 },
+        { image: 'https://assets.codepen.io/16327/portrait-number-07.png', order: 7 },
       ];
     }
 
@@ -205,7 +180,6 @@
       items = await loadBannerItems();
       const cardsList = document.getElementById('cardsList');
       
-      // Crear todas las cards
       items.forEach((item, index) => {
         const li = document.createElement('li');
         li.style.backgroundImage = `url(${item.image})`;
@@ -214,23 +188,15 @@
         cards.push(li);
       });
       
-      // Iniciar carrusel
       updateCards();
-      setInterval(nextCard, 4000); // Cambiar cada 4 segundos
+      setInterval(nextCard, 4000);
     }
 
     function updateCards() {
-      const total = cards.length;
-      
       cards.forEach((card, index) => {
-        card.classList.remove('active', 'next', 'prev');
-        
+        card.classList.remove('active');
         if (index === currentIndex) {
           card.classList.add('active');
-        } else if (index === (currentIndex + 1) % total) {
-          card.classList.add('next');
-        } else if (index === (currentIndex - 1 + total) % total) {
-          card.classList.add('prev');
         }
       });
     }
@@ -240,7 +206,6 @@
       updateCards();
     }
 
-    // Iniciar cuando cargue la página
     window.addEventListener('DOMContentLoaded', initCarousel);
   </script>
 </body>
