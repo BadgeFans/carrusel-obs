@@ -15,9 +15,7 @@
     
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <script>
-        let carouselData = [];
-        
-        // Función para calcular tiempo restante con formato completo
+        // Función mejorada para calcular tiempo restante con segundos
         function getTimeRemaining(endDateStr) {
             try {
                 const parts = endDateStr.trim().split(' ');
@@ -49,37 +47,27 @@
                 const minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                 const secondsLeft = Math.floor((diff % (1000 * 60)) / 1000);
                 
-                return { days, hours: hoursLeft, minutes: minutesLeft, seconds: secondsLeft };
+                // Formatear en inglés
+                if (days > 0) {
+                    return `${days}d ${hoursLeft}h ${minutesLeft}m remaining`;
+                } else {
+                    return `${hoursLeft}h ${minutesLeft}m ${secondsLeft}s remaining`;
+                }
             } catch (e) {
                 console.error('Error parsing date:', e);
                 return null;
             }
         }
         
-        // Formatear el tiempo restante en inglés
-        function formatTimeRemaining(timeObj) {
-            if (!timeObj) return '';
-            
-            if (timeObj.days > 0) {
-                return `${timeObj.days}d ${timeObj.hours}h ${timeObj.minutes}m remaining`;
-            } else {
-                return `${timeObj.hours}h ${timeObj.minutes}m ${timeObj.seconds}s remaining`;
-            }
-        }
-        
-        // Actualizar solo los contadores sin recargar todo
+        // Actualizar contadores sin recargar todo
         function updateCountdowns() {
-            const countdownElements = document.querySelectorAll('.countdown');
-            countdownElements.forEach((element, index) => {
-                const itemIndex = index % carouselData.length;
-                const item = carouselData[itemIndex];
-                
-                if (item && item.showCountdown && item.status === 'live') {
-                    const timeRemaining = getTimeRemaining(item.dateEnd);
-                    if (timeRemaining) {
-                        element.textContent = `⏱️ ${formatTimeRemaining(timeRemaining)}`;
-                    } else {
-                        element.textContent = '';
+            const countdowns = document.querySelectorAll('.countdown');
+            countdowns.forEach(countdown => {
+                const itemDiv = countdown.closest('.carousel-item');
+                if (itemDiv && itemDiv.dataset.endDate && itemDiv.dataset.showCountdown === 'true') {
+                    const timeText = getTimeRemaining(itemDiv.dataset.endDate);
+                    if (timeText) {
+                        countdown.textContent = `⏱️ ${timeText}`;
                     }
                 }
             });
@@ -91,6 +79,8 @@
                 const response = await fetch('https://api.github.com/repos/BadgeFans/carrusel-obs/contents/content/carousel');
                 const files = await response.json();
                 
+                const track = document.getElementById('carousel-track');
+                track.innerHTML = ''; // Limpiar antes de cargar
                 const items = [];
                 
                 for (const file of files) {
@@ -135,27 +125,37 @@
                     return orderA - orderB;
                 });
                 
-                carouselData = items;
-                renderCarousel();
+                const allItems = [...items, ...items];
                 
-            } catch (error) {
-                console.error('Error cargando items:', error);
-                loadDefaultItems();
-            }
-        }
-        
-        function renderCarousel() {
-            const track = document.getElementById('carousel-track');
-            track.innerHTML = '';
-            
-            const allItems = [...carouselData, ...carouselData];
-            
-            allItems.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'carousel-item';
-                
-                let iconHTML;
-                if (item.icon && (item.icon.startsWith('http') || item.icon.startsWith('/assets'))) {
-                    iconHTML = `<img src="${item.icon}" alt="badge" style="width: 60px; height: 60px; object-fit: contain; border-radius: 8px;">`;
-                } else {
-                    iconHTML = item.icon ||
+                allItems.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'carousel-item';
+                    div.dataset.endDate = item.dateEnd;
+                    div.dataset.showCountdown = item.showCountdown;
+                    
+                    let iconHTML;
+                    if (item.icon && (item.icon.startsWith('http') || item.icon.startsWith('/assets'))) {
+                        iconHTML = `<img src="${item.icon}" alt="badge" style="width: 60px; height: 60px; object-fit: contain; border-radius: 8px;">`;
+                    } else {
+                        iconHTML = item.icon || '⭐';
+                    }
+                    
+                    const statusText = item.status === 'live' ? 'LIVE' : 'Too late';
+                    
+                    let countdownHTML = '';
+                    const showCountdown = item.showCountdown === 'true' || item.showCountdown === true;
+                    
+                    if (showCountdown && item.status === 'live') {
+                        const timeText = getTimeRemaining(item.dateEnd);
+                        if (timeText) {
+                            countdownHTML = `<div class="countdown">⏱️ ${timeText}</div>`;
+                        }
+                    }
+                    
+                    div.innerHTML = `
+                        <div class="icon">${iconHTML}</div>
+                        <div class="info">
+                            <h3>${item.title}</h3>
+                            <span class="status ${item.status}">${statusText}</span>
+                            ${countdownHTML}
+                            <p class="date">${item.dateStart} - ${item.dateEnd.split(' ')[0]}</p>
