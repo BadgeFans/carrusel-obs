@@ -23,9 +23,6 @@
       position: relative;
       width: 996px;
       height: 350px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
     .cards {
@@ -37,6 +34,8 @@
 
     .cards li {
       position: absolute;
+      top: 0;
+      left: 0;
       width: 996px;
       height: 350px;
       background-size: cover;
@@ -44,14 +43,12 @@
       background-repeat: no-repeat;
       border-radius: 16px;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
       opacity: 0;
-      transform: scale(0.95);
+      transition: opacity 0.8s ease-in-out;
     }
 
     .cards li.active {
       opacity: 1;
-      transform: scale(1);
       z-index: 10;
       box-shadow: 0 0 40px rgba(168, 85, 247, 0.8),
                   0 0 80px rgba(168, 85, 247, 0.5),
@@ -162,13 +159,11 @@
 
     function getExampleData() {
       return [
-        { image: 'https://assets.codepen.io/16327/portrait-number-01.png', order: 1 },
-        { image: 'https://assets.codepen.io/16327/portrait-number-02.png', order: 2 },
-        { image: 'https://assets.codepen.io/16327/portrait-number-03.png', order: 3 },
-        { image: 'https://assets.codepen.io/16327/portrait-number-04.png', order: 4 },
-        { image: 'https://assets.codepen.io/16327/portrait-number-05.png', order: 5 },
-        { image: 'https://assets.codepen.io/16327/portrait-number-06.png', order: 6 },
-        { image: 'https://assets.codepen.io/16327/portrait-number-07.png', order: 7 },
+        { image: 'https://picsum.photos/seed/purple/996/350', order: 1 },
+        { image: 'https://picsum.photos/seed/neon/996/350', order: 2 },
+        { image: 'https://picsum.photos/seed/cyber/996/350', order: 3 },
+        { image: 'https://picsum.photos/seed/glow/996/350', order: 4 },
+        { image: 'https://picsum.photos/seed/tech/996/350', order: 5 },
       ];
     }
 
@@ -180,10 +175,9 @@
       items = await loadBannerItems();
       const cardsList = document.getElementById('cardsList');
       
-      items.forEach((item, index) => {
+      items.forEach((item) => {
         const li = document.createElement('li');
         li.style.backgroundImage = `url(${item.image})`;
-        li.dataset.index = index;
         cardsList.appendChild(li);
         cards.push(li);
       });
