@@ -48,7 +48,7 @@
                 
                 if (items.length === 0) {
                     items.push(
-                        { order: 1, title: 'Discord Quest 1', icon: '🎮', dateStart: '24/10/2025', dateEnd: '31/10/2025 23:59', status: 'live' }
+                        { order: 1, title: 'Discord Quest 1', icon: '🎮', dateStart: '24/10/2025', dateEnd: '31/10/2025 23:59', status: 'live', type: 'orbs' }
                     );
                 }
                 
@@ -74,11 +74,18 @@
                     
                     const statusText = item.status === 'live' ? 'Play Game' : 'Watch Video';
                     
+                    // Generar etiqueta de tipo (Orbs o Deco)
+                    const typeText = item.type === 'orbs' ? 'Orbs' : 'Deco';
+                    const typeClass = item.type === 'orbs' ? 'orbs' : 'deco';
+                    
                     div.innerHTML = `
                         <div class="icon">${iconHTML}</div>
                         <div class="info">
                             <h3>${item.title}</h3>
-                            <span class="status ${item.status}">${statusText}</span>
+                            <div class="tags">
+                                <span class="status ${item.status}">${statusText}</span>
+                                <span class="type ${typeClass}">${typeText}</span>
+                            </div>
                             <p class="date">${item.dateStart} - ${item.dateEnd.split(' ')[0]}</p>
                         </div>
                     `;
