@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Items - Carrusel OBS</title>
+    <title>Generador de Items - Carrusel OBS v2.0</title>
     <style>
         * {
             margin: 0;
@@ -43,6 +43,13 @@
             color: #666;
             margin-bottom: 30px;
             font-size: 0.9em;
+        }
+
+        .version {
+            text-align: center;
+            color: #999;
+            font-size: 0.8em;
+            margin-bottom: 20px;
         }
 
         .form-group {
@@ -177,6 +184,67 @@
             gap: 15px;
         }
 
+        .icon-type-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .icon-type-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .icon-type-btn.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .icon-type-btn:hover {
+            border-color: #667eea;
+        }
+
+        .icon-input-group {
+            display: none;
+        }
+
+        .icon-input-group.active {
+            display: block;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .info-box h5 {
+            color: #1565c0;
+            margin-bottom: 8px;
+        }
+
+        .info-box p {
+            color: #1565c0;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .info-box a {
+            color: #1565c0;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
         @media (max-width: 600px) {
             .row {
                 grid-template-columns: 1fr;
@@ -192,6 +260,7 @@
     <div class="container">
         <h1>🎮 Generador de Items</h1>
         <p class="subtitle">Carrusel OBS - Admin Personalizado</p>
+        <p class="version">v2.0 - Con soporte para imágenes</p>
 
         <form id="itemForm">
             <div class="form-group">
@@ -207,9 +276,41 @@
             </div>
 
             <div class="form-group">
-                <label for="icon">🎨 Emoji o Icono</label>
-                <input type="text" id="icon" name="icon" placeholder="🎮" value="🎮" required>
-                <div class="hint">Un emoji como 🎮 💀 🐉 🔥 ⭐</div>
+                <label>🎨 Tipo de Icono/Badge</label>
+                <div class="icon-type-selector">
+                    <div class="icon-type-btn active" data-type="emoji" onclick="selectIconType('emoji')">
+                        😊 Emoji
+                    </div>
+                    <div class="icon-type-btn" data-type="image" onclick="selectIconType('image')">
+                        🖼️ Imagen PNG
+                    </div>
+                </div>
+
+                <div id="emojiInput" class="icon-input-group active">
+                    <input type="text" id="icon" name="icon" placeholder="🎮" value="🎮">
+                    <div class="hint">Un emoji como 🎮 💀 🐉 🔥 ⭐ 👑 ⚔️ 🎯</div>
+                </div>
+
+                <div id="imageInput" class="icon-input-group">
+                    <input type="url" id="iconUrl" name="iconUrl" placeholder="https://i.imgur.com/abc123.png">
+                    <div class="hint">URL completa de tu imagen (desde Imgur o GitHub)</div>
+                    
+                    <div class="info-box">
+                        <h5>📸 Cómo subir tu imagen:</h5>
+                        <p>
+                            <strong>Opción 1 - Imgur (Rápido):</strong><br>
+                            1. Ve a <a href="https://imgur.com" target="_blank">imgur.com</a><br>
+                            2. Click en "New post" y sube tu PNG<br>
+                            3. Click derecho → "Copiar dirección de imagen"<br>
+                            4. Pégala arriba<br><br>
+                            
+                            <strong>Opción 2 - GitHub:</strong><br>
+                            1. En tu repo, ve a assets/images/<br>
+                            2. Upload tu PNG<br>
+                            3. Usa: /assets/images/tu-imagen.png
+                        </p>
+                    </div>
+                </div>
             </div>
 
             <div class="row">
@@ -271,18 +372,51 @@
     </div>
 
     <script>
+        let currentIconType = 'emoji';
+
+        function selectIconType(type) {
+            currentIconType = type;
+            
+            // Actualizar botones
+            document.querySelectorAll('.icon-type-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-type="${type}"]`).classList.add('active');
+            
+            // Mostrar/ocultar inputs
+            document.getElementById('emojiInput').classList.remove('active');
+            document.getElementById('imageInput').classList.remove('active');
+            
+            if (type === 'emoji') {
+                document.getElementById('emojiInput').classList.add('active');
+            } else {
+                document.getElementById('imageInput').classList.add('active');
+            }
+        }
+
         document.getElementById('itemForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             // Obtener valores del formulario
             const order = document.getElementById('order').value;
             const title = document.getElementById('title').value;
-            const icon = document.getElementById('icon').value;
             const dateStart = document.getElementById('dateStart').value;
             const dateEnd = document.getElementById('dateEnd').value;
             const timeEnd = document.getElementById('timeEnd').value;
             const status = document.getElementById('status').value;
             const showCountdown = document.getElementById('showCountdown').value;
+            
+            // Obtener icono según tipo
+            let icon;
+            if (currentIconType === 'emoji') {
+                icon = document.getElementById('icon').value;
+            } else {
+                icon = document.getElementById('iconUrl').value;
+                if (!icon) {
+                    alert('⚠️ Por favor ingresa la URL de tu imagen');
+                    return;
+                }
+            }
             
             // Formatear fechas a DD/MM/YYYY
             const formatDate = (dateStr) => {
