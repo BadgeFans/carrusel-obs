@@ -1,1 +1,452 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador Discord Quests v3.0</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #5865F2;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+
+        .version {
+            text-align: center;
+            color: #999;
+            font-size: 0.8em;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #5865F2;
+            box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.1);
+        }
+
+        .hint {
+            font-size: 0.85em;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-top: 10px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(88, 101, 242, 0.4);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .output {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px solid #5865F2;
+        }
+
+        .output.show {
+            display: block;
+        }
+
+        .output h3 {
+            color: #5865F2;
+            margin-bottom: 15px;
+        }
+
+        .code-box {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin-bottom: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .copy-btn {
+            background: #28a745;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #218838;
+        }
+
+        .instructions {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .instructions h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            color: #856404;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .icon-type-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .icon-type-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .icon-type-btn.active {
+            border-color: #5865F2;
+            background: #5865F2;
+            color: white;
+        }
+
+        .icon-type-btn:hover {
+            border-color: #5865F2;
+        }
+
+        .icon-input-group {
+            display: none;
+        }
+
+        .icon-input-group.active {
+            display: block;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .info-box h5 {
+            color: #1565c0;
+            margin-bottom: 8px;
+        }
+
+        .info-box p {
+            color: #1565c0;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .info-box a {
+            color: #1565c0;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .row {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Generador Discord Quests</h1>
+        <p class="subtitle">Carrusel Discord - Admin Personalizado</p>
+        <p class="version">v3.0 - Limpio y sin problemas de fechas</p>
+
+        <form id="itemForm">
+            <div class="form-group">
+                <label for="order">🔢 Orden de Aparición</label>
+                <input type="number" id="order" name="order" min="1" max="20" value="1" required>
+                <div class="hint">Número del 1 al 20 (define el orden en el carrusel)</div>
+            </div>
+
+            <div class="form-group">
+                <label for="title">📝 Título del Quest</label>
+                <input type="text" id="title" name="title" placeholder="Ej: Stream 15 min" required>
+                <div class="hint">El nombre que aparecerá en el carrusel</div>
+            </div>
+
+            <div class="form-group">
+                <label>🎨 Tipo de Icono/Badge</label>
+                <div class="icon-type-selector">
+                    <div class="icon-type-btn active" data-type="emoji" onclick="selectIconType('emoji')">
+                        😊 Emoji
+                    </div>
+                    <div class="icon-type-btn" data-type="image" onclick="selectIconType('image')">
+                        🖼️ Imagen PNG
+                    </div>
+                </div>
+
+                <div id="emojiInput" class="icon-input-group active">
+                    <input type="text" id="icon" name="icon" placeholder="🎮" value="🎮">
+                    <div class="hint">Un emoji como 🎮 💀 🐉 🔥 ⭐ 👑 ⚔️ 🎯</div>
+                </div>
+
+                <div id="imageInput" class="icon-input-group">
+                    <input type="url" id="iconUrl" name="iconUrl" placeholder="https://i.imgur.com/abc123.png">
+                    <div class="hint">URL completa de tu imagen (desde Imgur o GitHub)</div>
+                    
+                    <div class="info-box">
+                        <h5>📸 Cómo subir tu imagen:</h5>
+                        <p>
+                            <strong>Opción 1 - Imgur (Rápido):</strong><br>
+                            1. Ve a <a href="https://imgur.com" target="_blank">imgur.com</a><br>
+                            2. Click en "New post" y sube tu PNG<br>
+                            3. Click derecho → "Copiar dirección de imagen"<br>
+                            4. Pégala arriba<br><br>
+                            
+                            <strong>Opción 2 - GitHub:</strong><br>
+                            1. En tu repo, ve a assets/images/<br>
+                            2. Upload tu PNG<br>
+                            3. Usa: /assets/images/tu-imagen.png
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label for="dateStart">📅 Fecha Inicio</label>
+                    <input type="date" id="dateStart" name="dateStart" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="dateEnd">📅 Fecha Fin</label>
+                    <input type="date" id="dateEnd" name="dateEnd" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="timeEnd">⏰ Hora de Fin</label>
+                <input type="time" id="timeEnd" name="timeEnd" value="23:59">
+                <div class="hint">Hora límite del quest</div>
+            </div>
+
+            <div class="form-group">
+                <label for="status">🚦 Estado del Quest</label>
+                <select id="status" name="status" required>
+                    <option value="live">🟢 LIVE (Activo)</option>
+                    <option value="toolate">🔴 Too Late (Terminado)</option>
+                </select>
+            </div>
+
+            <button type="submit" class="button">✨ Generar Código</button>
+        </form>
+
+        <div id="output" class="output">
+            <h3>📋 Código Generado</h3>
+            <div class="code-box" id="codeBox"></div>
+            <button class="copy-btn" onclick="copyCode()">📋 Copiar Código</button>
+
+            <div class="instructions">
+                <h4>📌 Cómo usar este código:</h4>
+                <ol>
+                    <li>Click en "📋 Copiar Código" arriba</li>
+                    <li>Ve a tu GitHub: <code>tu-usuario/carrusel-obs</code></li>
+                    <li>Entra a la carpeta <code>content/discord/</code></li>
+                    <li>Click en "Add file" → "Create new file"</li>
+                    <li>Nombre: <code id="fileName"></code></li>
+                    <li>Pega el código copiado</li>
+                    <li>Click en "Commit changes"</li>
+                    <li>¡Listo! En 1-2 minutos aparecerá en tu carrusel Discord 🎉</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentIconType = 'emoji';
+
+        function selectIconType(type) {
+            currentIconType = type;
+            
+            document.querySelectorAll('.icon-type-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-type="${type}"]`).classList.add('active');
+            
+            document.getElementById('emojiInput').classList.remove('active');
+            document.getElementById('imageInput').classList.remove('active');
+            
+            if (type === 'emoji') {
+                document.getElementById('emojiInput').classList.add('active');
+            } else {
+                document.getElementById('imageInput').classList.add('active');
+            }
+        }
+
+        document.getElementById('itemForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const order = document.getElementById('order').value;
+            const title = document.getElementById('title').value;
+            const dateStart = document.getElementById('dateStart').value;
+            const dateEnd = document.getElementById('dateEnd').value;
+            const timeEnd = document.getElementById('timeEnd').value;
+            const status = document.getElementById('status').value;
+            
+            let icon;
+            if (currentIconType === 'emoji') {
+                icon = document.getElementById('icon').value;
+            } else {
+                icon = document.getElementById('iconUrl').value;
+                if (!icon) {
+                    alert('⚠️ Por favor ingresa la URL de tu imagen');
+                    return;
+                }
+            }
+            
+            const formatDate = (dateStr) => {
+                const parts = dateStr.split('-');
+                const day = parts[2];
+                const month = parts[1];
+                const year = parts[0];
+                return `${day}/${month}/${year}`;
+            };
+            
+            const formattedStart = formatDate(dateStart);
+            const formattedEnd = formatDate(dateEnd);
+            
+            const code = `---
+order: ${order}
+title: ${title}
+icon: ${icon}
+dateStart: ${formattedStart}
+dateEnd: ${formattedEnd} ${timeEnd}
+status: ${status}
+---`;
+            
+            document.getElementById('codeBox').textContent = code;
+            document.getElementById('output').classList.add('show');
+            
+            const fileName = title.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-') + '.md';
+            document.getElementById('fileName').textContent = fileName;
+            
+            document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        function copyCode() {
+            const code = document.getElementById('codeBox').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ ¡Copiado!';
+                btn.style.background = '#28a745';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
