@@ -44,14 +44,7 @@
             rgba(255,255,255,0.00) 100%);
     }
 
-    /* Capa de TINTE opcional (aplicada por JS si hay background) */
-    .tint {
-        position:absolute; inset:0; pointer-events:none; opacity:0.15; /* 15% por defecto */
-        mix-blend-mode: normal; /* mantener natural el color */
-        border-radius: 0;
-    }
-
-    /* Sheen diagonal muy sutil */
+    .tint { position:absolute; inset:0; pointer-events:none; opacity:0.15; display:none; }
     .sheen {
         position:absolute; inset:0; pointer-events:none;
         background: linear-gradient(130deg,
@@ -67,10 +60,16 @@
         padding:30px 40px; position:relative;
     }
 
+    /* Imagen por idioma (arriba-derecha) */
+    #langImage {
+        position:absolute; top:22px; right:22px; max-height:64px; max-width:160px;
+        border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.35); display:none;
+    }
+
     .title-box { width:100%; margin-bottom:25px; text-align:center; min-height:50px; display:flex; align-items:center; justify-content:center; }
     .title { font-size:36px; font-weight:bold; color:#fff; text-transform:uppercase; letter-spacing:3px; text-shadow: 3px 3px 10px rgba(0,0,0,0.8); }
-    .description-box { flex:1; width:100%; display:flex; align-items:center; }
-    .description { font-size:19px; line-height:1.6; color:#fff; text-align:left; text-shadow: 2px 2px 8px rgba(0,0,0,0.9); }
+    .description-box { flex:1; width:100%; display:flex; align-items:center; gap:20px; }
+    .description { flex:1; font-size:19px; line-height:1.6; color:#fff; text-align:left; text-shadow: 2px 2px 8px rgba(0,0,0,0.9); }
 
     /* Glitch minimal */
     .glitch { animation: glitch .8s ease-in-out; }
@@ -93,18 +92,20 @@
 </head>
 <body>
     <div class="glass-overlay" id="glassOverlay">
-        <div class="tint" id="tint" style="display:none;"></div>
+        <div class="tint" id="tint"></div>
         <div class="sheen"></div>
         <div class="content-wrapper">
+            <img id="langImage" alt="">
             <div class="title-box"><h1 class="title" id="title">NEW STREAM SCHEDULE</h1></div>
-            <div class="description-box"><p class="description" id="description">Streaming Monday to Friday from 8 PM to 11 PM EST. Join us for gaming, chat, and fun times!</p></div>
+            <div class="description-box">
+                <p class="description" id="description">Streaming Monday to Friday from 8 PM to 11 PM EST. Join us for gaming, chat, and fun times!</p>
+            </div>
         </div>
     </div>
 
     <script>
-        // Control de intensidad del tinte (0.00 a 0.30 recomendado)
+        // Opacidad del tinte (0.00 a 0.30 recomendado)
         const TINT_OPACITY = 0.15;
-
         const config = { timePerLanguage: 4000, glitchDuration: 800 };
 
         async function loadBannerItems() {
@@ -140,6 +141,8 @@
                 titleSize: data.titleSize||'36',
                 descSize: data.descSize||'19',
                 background: data.background||'',
+                imageEN: data.imageEN || '',
+                imageES: data.imageES || '',
                 images: data.images||[]
             };
         }
@@ -152,7 +155,9 @@
                 description:'Streaming Monday to Friday from 8 PM to 11 PM EST. Join us for gaming, chat, and fun times!',
                 descriptionES:'Transmitiendo de lunes a viernes de 8 PM a 11 PM EST. ¡Únete para juegos, chat y buenos momentos!',
                 titleSize:'36', descSize:'19',
-                background:'linear-gradient(135deg, #a855f7, #ec4899)'
+                background:'linear-gradient(135deg, #a855f7, #ec4899)',
+                imageEN:'https://i.imgur.com/abcdEN.png',
+                imageES:'https://i.imgur.com/abcdES.png'
             }];
         }
 
@@ -162,10 +167,13 @@
             const t=document.getElementById('title');
             const d=document.getElementById('description');
             const tint=document.getElementById('tint');
+            const img=document.getElementById('langImage');
 
+            // Tipografías
             t.style.fontSize = (item.titleSize||'36')+'px';
             d.style.fontSize = (item.descSize||'19')+'px';
 
+            // Tinte
             if (item.background) {
                 tint.style.background = item.background;
                 tint.style.opacity = TINT_OPACITY;
@@ -173,18 +181,37 @@
             } else {
                 tint.style.display = 'none';
             }
+
+            // Imagen inicial (EN prioritario)
+            if (item.imageEN || item.imageES) {
+                img.style.display = 'block';
+                img.src = item.imageEN || item.imageES;
+            } else {
+                img.style.display = 'none';
+                img.removeAttribute('src');
+            }
         }
 
         function swapLanguage(item){
             const t=document.getElementById('title');
             const d=document.getElementById('description');
             const g=document.getElementById('glassOverlay');
+            const img=document.getElementById('langImage');
+
             t.classList.add('glitch'); d.classList.add('glitch'); g.classList.add('glass-glitch');
+
             setTimeout(()=>{
                 lang = (lang==='en')?'es':'en';
                 t.textContent = (lang==='en') ? item.title : (item.titleES || item.title);
                 d.textContent = (lang==='en') ? item.description : (item.descriptionES || item.description);
+
+                const nextSrc = (lang==='en') ? (item.imageEN || item.imageES || '')
+                                             : (item.imageES || item.imageEN || '');
+                if (nextSrc) { img.style.display='block'; if (img.src !== nextSrc) img.src = nextSrc; }
+                else { img.style.display='none'; img.removeAttribute('src'); }
+
             }, config.glitchDuration/2);
+
             setTimeout(()=>{ t.classList.remove('glitch'); d.classList.remove('glitch'); g.classList.remove('glass-glitch'); }, config.glitchDuration);
         }
 
@@ -196,6 +223,7 @@
             lang='en';
 
             setInterval(()=> swapLanguage(item), config.timePerLanguage);
+
             setInterval(()=>{
                 cardIndex = (cardIndex+1)%items.length;
                 const next = items[cardIndex];
