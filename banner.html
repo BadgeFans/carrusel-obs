@@ -198,7 +198,7 @@
     <script>
         async function loadBannerItems() {
             try {
-                const response = await fetch('https://api.github.com/repos/TU-USUARIO/carrusel-obs/contents/content/banner');
+                const response = await fetch('https://api.github.com/repos/BadgeFans/carrusel-obs/contents/content/banner');
                 const files = await response.json();
                 
                 const mdFiles = files.filter(file => file.name.endsWith('.md'));
