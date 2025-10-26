@@ -46,7 +46,7 @@
             opacity: 0;
             transform: translateY(100%);
             
-            /* Efecto Glassmorphism */
+            /* Efecto Glassmorphism solo en el fondo general */
             background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
@@ -54,7 +54,6 @@
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
         }
         
-        /* Gradientes semi-transparentes por slide */
         .carousel-item:nth-child(1) { 
             background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
         }
@@ -71,7 +70,6 @@
             background: linear-gradient(135deg, rgba(250, 112, 154, 0.3), rgba(254, 225, 64, 0.3));
         }
         
-        /* Brillo interno del cristal */
         .carousel-item::before {
             content: '';
             position: absolute;
@@ -109,27 +107,20 @@
             z-index: 0;
         }
         
-        /* Contenedor del título con efecto cristal */
+        /* Título sin caja/marco */
         .title-box {
             width: 100%;
-            background: rgba(0, 0, 0, 0.25);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 12px;
-            padding: 15px 20px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
         
         .title {
-            font-size: 32px;
+            font-size: 36px;
             font-weight: bold;
             color: #ffffff;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
+            letter-spacing: 3px;
+            text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8);
             margin: 0;
         }
         
@@ -138,27 +129,23 @@
             flex: 1;
             width: 100%;
             display: flex;
-            gap: 20px;
+            gap: 25px;
             align-items: center;
             position: relative;
             z-index: 1;
         }
         
-        /* Descripción */
+        /* Descripción sin caja/marco */
         .description {
             flex: 1;
-            font-size: 18px;
-            line-height: 1.5;
+            font-size: 19px;
+            line-height: 1.6;
             color: #ffffff;
             text-align: left;
-            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
-            background: rgba(0, 0, 0, 0.2);
-            padding: 20px;
-            border-radius: 10px;
-            backdrop-filter: blur(5px);
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);
         }
         
-        /* Contenedor de imágenes */
+        /* Imágenes sin marcos */
         .images-container {
             display: flex;
             gap: 15px;
@@ -166,15 +153,13 @@
         }
         
         .content-image {
-            max-height: 150px;
-            max-width: 200px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-            border: 2px solid rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(5px);
+            max-height: 160px;
+            max-width: 210px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
         }
         
-        /* Indicadores con efecto cristal */
+        /* Indicadores */
         .indicators {
             position: absolute;
             bottom: 15px;
