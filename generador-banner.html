@@ -1,23 +1,219 @@
-document.getElementById('itemForm').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const order = document.getElementById('order').value;
-    const title = document.getElementById('title').value.trim();
-    const titleES = document.getElementById('titleES').value.trim();
-    const description = document.getElementById('description').value.trim();
-    const descriptionES = document.getElementById('descriptionES').value.trim();
-    const background = document.getElementById('background').value;
-    const imagesText = document.getElementById('images').value.trim();
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Generador Banner Carrusel v3.1</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+      min-height: 100vh; padding: 20px; display: flex; justify-content: center; align-items: center;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+      border-radius: 20px; padding: 40px; max-width: 780px; width: 100%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    h1 { color: #a855f7; text-align: center; margin-bottom: 10px; font-size: 2em; }
+    .subtitle { text-align: center; color: #666; margin-bottom: 30px; font-size: 0.9em; }
+    .version { text-align: center; color: #999; font-size: 0.8em; margin-bottom: 20px; }
 
-    // NUEVO
-    const imageEN = document.getElementById('imageEN').value.trim();
-    const imageES = document.getElementById('imageES').value.trim();
+    .form-group { margin-bottom: 18px; }
+    label { display: block; margin-bottom: 8px; color: #333; font-weight: 600; font-size: 0.95em; }
+    input, select, textarea {
+      width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1em;
+      transition: all 0.3s ease; background: white; font-family: inherit;
+    }
+    textarea { resize: vertical; min-height: 90px; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: #a855f7; box-shadow: 0 0 0 3px rgba(168,85,247,.1); }
+    .hint { font-size: .85em; color: #888; margin-top: 6px; }
+    .char-row { display: flex; gap: 10px; }
+    .char-row .col { flex: 1; }
 
-    if (!title || !titleES || !description || !descriptionES) {
+    .slider-container { display: flex; align-items: center; gap: 12px; }
+    .slider-container input[type=range] {
+      flex: 1; height: 8px; -webkit-appearance: none; appearance: none;
+      background: linear-gradient(90deg,#a855f7 0%, #ec4899 100%); outline: none; opacity: .8;
+    }
+    .slider-container input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 20px; height: 20px; background: #a855f7; border-radius: 50%;
+      box-shadow: 0 2px 5px rgba(0,0,0,.3);
+    }
+    .size-value { min-width: 52px; text-align: right; font-size: .9em; color: #a855f7; font-weight: 700; }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 720px) { .row { grid-template-columns: 1fr; } }
+
+    .button {
+      width: 100%; padding: 14px; background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+      color: #fff; border: none; border-radius: 10px; font-size: 1.05em; font-weight: 700;
+      cursor: pointer; transition: transform .2s, box-shadow .2s; margin-top: 12px;
+    }
+    .button:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(168,85,247,.35); }
+
+    .output { display: none; margin-top: 26px; padding: 18px; background: #f8f9fa; border-radius: 10px; border: 2px solid #a855f7; }
+    .output.show { display: block; }
+    .output h3 { color: #a855f7; margin-bottom: 12px; }
+    .code-box {
+      background: #2d2d2d; color: #f8f8f2; padding: 16px; border-radius: 10px; font-family: 'Courier New', monospace;
+      font-size: .9em; white-space: pre-wrap; word-wrap: break-word; max-height: 320px; overflow-y: auto; margin-bottom: 12px;
+    }
+    .copy-btn { background: #28a745; padding: 10px 16px; border: none; border-radius: 8px; color: #fff; cursor: pointer; font-weight: 700; }
+    .copy-btn:hover { background: #218838; }
+
+    .instructions { background: #fff3cd; padding: 14px; border-radius: 10px; margin-top: 12px; border-left: 4px solid #ffc107; }
+    .instructions h4 { color: #856404; margin-bottom: 8px; }
+    .instructions ol { margin-left: 20px; color: #856404; }
+    .instructions li { margin-bottom: 6px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎴 Generador Banner Carrusel</h1>
+    <p class="subtitle">Barra 1920x350 (contenido centrado 996px) · Bilingüe EN/ES</p>
+    <p class="version">v3.1 · Morphing + Glitch · Tinte suave</p>
+
+    <form id="itemForm">
+      <div class="form-group">
+        <label for="order">🔢 Orden de Aparición</label>
+        <input type="number" id="order" name="order" min="1" max="50" value="1" required>
+        <div class="hint">Define la posición en el carrusel</div>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label for="title">📝 Título (English)</label>
+          <input type="text" id="title" name="title" placeholder="NEW STREAM SCHEDULE" required maxlength="60">
+        </div>
+        <div class="form-group">
+          <label for="titleES">📝 Título (Español)</label>
+          <input type="text" id="titleES" name="titleES" placeholder="NUEVO HORARIO DE STREAM" required maxlength="60">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label for="titleSize">📏 Tamaño Título</label>
+          <div class="slider-container">
+            <input type="range" id="titleSize" name="titleSize" min="24" max="54" value="36">
+            <span class="size-value"><span id="titleSizeValue">36</span>px</span>
+          </div>
+          <div class="hint">24-54px (default 36px)</div>
+        </div>
+        <div class="form-group">
+          <label for="descSize">📏 Tamaño Descripción</label>
+          <div class="slider-container">
+            <input type="range" id="descSize" name="descSize" min="14" max="28" value="19">
+            <span class="size-value"><span id="descSizeValue">19</span>px</span>
+          </div>
+          <div class="hint">14-28px (default 19px)</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>📄 Descripción (EN / ES)</label>
+        <div class="char-row">
+          <div class="col">
+            <textarea id="description" placeholder="Streaming Monday to Friday from 8 PM to 11 PM EST..." maxlength="250" required></textarea>
+            <div class="hint"><span id="charCountEN">0</span> / 250 (EN)</div>
+          </div>
+          <div class="col">
+            <textarea id="descriptionES" placeholder="Transmitiendo de lunes a viernes de 8 PM a 11 PM EST..." maxlength="250" required></textarea>
+            <div class="hint"><span id="charCountES">0</span> / 250 (ES)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="background">🎨 Fondo (opcional)</label>
+        <select id="background">
+          <option value="">Sin especificar (usa por defecto)</option>
+          <option value="linear-gradient(135deg, #a855f7, #ec4899)">Morado → Rosa</option>
+          <option value="linear-gradient(135deg, #667eea, #764ba2)">Azul → Morado</option>
+          <option value="linear-gradient(135deg, #f093fb, #f5576c)">Rosa fuerte</option>
+          <option value="linear-gradient(135deg, #4facfe, #00f2fe)">Azul cyan</option>
+          <option value="linear-gradient(135deg, #43e97b, #38f9d7)">Verde menta</option>
+          <option value="linear-gradient(135deg, #fa709a, #fee140)">Naranja amarillo</option>
+        </select>
+        <div class="hint">Se usará como capa de color suave sobre el cristal (opcional)</div>
+      </div>
+
+      <div class="form-group">
+        <label for="images">🖼️ URLs de Imágenes (Opcional, columna derecha)</label>
+        <textarea id="images" placeholder="https://i.imgur.com/imagen1.png
+https://i.imgur.com/imagen2.png" rows="3"></textarea>
+        <div class="hint">Una URL por línea (máx. 3).</div>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label for="imageEN">🖼️ Imagen (English) opcional</label>
+          <input type="url" id="imageEN" placeholder="https://i.imgur.com/icon-en.png">
+          <div class="hint">Se muestra cuando el texto está en inglés (EN).</div>
+        </div>
+        <div class="form-group">
+          <label for="imageES">🖼️ Imagen (Español) opcional</label>
+          <input type="url" id="imageES" placeholder="https://i.imgur.com/icon-es.png">
+          <div class="hint">Se muestra cuando el texto está en español (ES).</div>
+        </div>
+      </div>
+
+      <button type="submit" class="button">✨ Generar Código</button>
+    </form>
+
+    <div id="output" class="output">
+      <h3>📋 Código Generado (.md)</h3>
+      <div class="code-box" id="codeBox"></div>
+      <button class="copy-btn" onclick="copyCode()">📋 Copiar Código</button>
+
+      <div class="instructions">
+        <h4>📌 Cómo usarlo</h4>
+        <ol>
+          <li>Click en “Copiar Código”.</li>
+          <li>Ve a tu repo: <code>carrusel-obs/content/banner/</code>.</li>
+          <li>“Add file” → “Create new file”.</li>
+          <li>Pega el contenido y nómbralo: <code id="fileName"></code></li>
+          <li>Commit y espera 1-2 minutos para verlo en el banner.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const titleSize = document.getElementById('titleSize');
+    const descSize = document.getElementById('descSize');
+    const titleSizeValue = document.getElementById('titleSizeValue');
+    const descSizeValue = document.getElementById('descSizeValue');
+    const descEN = document.getElementById('description');
+    const descES = document.getElementById('descriptionES');
+
+    titleSize.addEventListener('input', () => titleSizeValue.textContent = titleSize.value);
+    descSize.addEventListener('input', () => descSizeValue.textContent = descSize.value);
+    descEN.addEventListener('input', () => document.getElementById('charCountEN').textContent = descEN.value.length);
+    descES.addEventListener('input', () => document.getElementById('charCountES').textContent = descES.value.length);
+
+    document.getElementById('itemForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const order = document.getElementById('order').value;
+      const title = document.getElementById('title').value.trim();
+      const titleES = document.getElementById('titleES').value.trim();
+      const description = descEN.value.trim();
+      const descriptionES = descES.value.trim();
+      const background = document.getElementById('background').value;
+      const imagesText = document.getElementById('images').value.trim();
+
+      const imageEN = document.getElementById('imageEN').value.trim();
+      const imageES = document.getElementById('imageES').value.trim();
+
+      if (!title || !titleES || !description || !descriptionES) {
         alert('⚠️ Completa títulos y descripciones en ambos idiomas.');
         return;
-    }
+      }
 
-    let code = `---
+      let code = `---
 order: ${order}
 title: ${title}
 titleES: ${titleES}
@@ -26,22 +222,34 @@ descriptionES: ${descriptionES}
 titleSize: ${titleSize.value}
 descSize: ${descSize.value}`;
 
-    if (background) code += `\nbackground: ${background}`;
-    if (imagesText) {
+      if (background) code += `\nbackground: ${background}`;
+
+      if (imagesText) {
         const list = imagesText.split('\n').map(s => s.trim()).filter(Boolean).join(', ');
         code += `\nimages: ${list}`;
+      }
+
+      if (imageEN) code += `\nimageEN: ${imageEN}`;
+      if (imageES) code += `\nimageES: ${imageES}`;
+
+      code += `\n---`;
+
+      document.getElementById('codeBox').textContent = code;
+      document.getElementById('output').classList.add('show');
+
+      const fileName = title.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-') + '.md';
+      document.getElementById('fileName').textContent = fileName;
+      document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    function copyCode() {
+      const code = document.getElementById('codeBox').textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = event.target; const original = btn.textContent;
+        btn.textContent = '✅ ¡Copiado!'; btn.style.background = '#28a745';
+        setTimeout(() => { btn.textContent = original; btn.style.background = ''; }, 1800);
+      });
     }
-
-    // NUEVO: solo agrega si se completan
-    if (imageEN) code += `\nimageEN: ${imageEN}`;
-    if (imageES) code += `\nimageES: ${imageES}`;
-
-    code += `\n---`;
-
-    document.getElementById('codeBox').textContent = code;
-    document.getElementById('output').classList.add('show');
-
-    const fileName = title.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-') + '.md';
-    document.getElementById('fileName').textContent = fileName;
-    document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
-});
+  </script>
+</body>
+</html>
