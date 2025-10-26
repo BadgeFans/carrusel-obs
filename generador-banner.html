@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador Banner Carrusel v2.0</title>
+    <title>Generador Banner Carrusel v2.1</title>
     <style>
         * {
             margin: 0;
@@ -75,6 +75,41 @@
             font-family: inherit;
         }
 
+        input[type="range"] {
+            padding: 0;
+            height: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: linear-gradient(90deg, #a855f7 0%, #ec4899 100%);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        input[type="range"]:hover {
+            opacity: 1;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #a855f7;
+            cursor: pointer;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #a855f7;
+            cursor: pointer;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
         textarea {
             resize: vertical;
             min-height: 100px;
@@ -92,11 +127,27 @@
             margin-top: 5px;
         }
 
-        .char-count {
+        .char-count, .size-value {
             font-size: 0.85em;
             color: #a855f7;
             margin-top: 5px;
             font-weight: 600;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .slider-container input[type="range"] {
+            flex: 1;
+        }
+
+        .slider-container .size-value {
+            min-width: 50px;
+            text-align: right;
+            margin: 0;
         }
 
         .button {
@@ -236,7 +287,7 @@
     <div class="container">
         <h1>🎴 Generador Banner Carrusel</h1>
         <p class="subtitle">Banner 996x350 - Admin Personalizado</p>
-        <p class="version">v2.0 - Con Título, Descripción e Imágenes</p>
+        <p class="version">v2.1 - Con Control de Tamaños de Letra</p>
 
         <form id="itemForm">
             <div class="form-group">
@@ -252,12 +303,30 @@
             </div>
 
             <div class="form-group">
+                <label for="titleSize">📏 Tamaño del Título</label>
+                <div class="slider-container">
+                    <input type="range" id="titleSize" name="titleSize" min="24" max="54" value="36">
+                    <span class="size-value"><span id="titleSizeValue">36</span>px</span>
+                </div>
+                <div class="hint">Ajusta el tamaño del título (24-54px, default: 36px)</div>
+            </div>
+
+            <div class="form-group">
                 <label for="description">📄 Descripción</label>
                 <textarea id="description" name="description" placeholder="Escribe aquí la descripción completa que quieres mostrar..." required maxlength="250"></textarea>
                 <div class="char-count">
                     <span id="charCount">0</span> / 250 caracteres
                 </div>
                 <div class="hint">Texto detallado que aparece en el centro</div>
+            </div>
+
+            <div class="form-group">
+                <label for="descSize">📏 Tamaño de la Descripción</label>
+                <div class="slider-container">
+                    <input type="range" id="descSize" name="descSize" min="14" max="28" value="19">
+                    <span class="size-value"><span id="descSizeValue">19</span>px</span>
+                </div>
+                <div class="hint">Ajusta el tamaño de la descripción (14-28px, default: 19px)</div>
             </div>
 
             <div class="form-group">
@@ -276,7 +345,8 @@
 
             <div class="form-group">
                 <label for="images">🖼️ URLs de Imágenes (Opcional)</label>
-                <textarea id="images" name="images" placeholder="https://i.imgur.com/imagen1.png&#10;https://i.imgur.com/imagen2.png" rows="3"></textarea>
+                <textarea id="images" name="images" placeholder="https://i.imgur.com/imagen1.png
+https://i.imgur.com/imagen2.png" rows="3"></textarea>
                 <div class="hint">Una URL por línea (máx. 3 imágenes). Deja vacío si no quieres imágenes.</div>
                 
                 <div class="info-box">
@@ -320,9 +390,21 @@
     <script>
         const descriptionField = document.getElementById('description');
         const charCountSpan = document.getElementById('charCount');
+        const titleSizeSlider = document.getElementById('titleSize');
+        const titleSizeValue = document.getElementById('titleSizeValue');
+        const descSizeSlider = document.getElementById('descSize');
+        const descSizeValue = document.getElementById('descSizeValue');
 
         descriptionField.addEventListener('input', function() {
             charCountSpan.textContent = this.value.length;
+        });
+
+        titleSizeSlider.addEventListener('input', function() {
+            titleSizeValue.textContent = this.value;
+        });
+
+        descSizeSlider.addEventListener('input', function() {
+            descSizeValue.textContent = this.value;
         });
 
         document.getElementById('itemForm').addEventListener('submit', function(e) {
@@ -333,6 +415,8 @@
             const description = document.getElementById('description').value;
             const background = document.getElementById('background').value;
             const imagesText = document.getElementById('images').value.trim();
+            const titleSize = document.getElementById('titleSize').value;
+            const descSize = document.getElementById('descSize').value;
             
             if (!title || !description) {
                 alert('⚠️ Por favor completa el título y la descripción');
@@ -343,6 +427,14 @@
 order: ${order}
 title: ${title}
 description: ${description}`;
+
+            if (titleSize && titleSize !== '36') {
+                code += `\ntitleSize: ${titleSize}`;
+            }
+
+            if (descSize && descSize !== '19') {
+                code += `\ndescSize: ${descSize}`;
+            }
 
             if (background) {
                 code += `\nbackground: ${background}`;
