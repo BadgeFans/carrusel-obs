@@ -46,7 +46,6 @@
             opacity: 0;
             transform: translateY(100%);
             
-            /* Efecto Glassmorphism solo en el fondo general */
             background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
@@ -107,7 +106,6 @@
             z-index: 0;
         }
         
-        /* Título sin caja/marco */
         .title-box {
             width: 100%;
             margin-bottom: 25px;
@@ -124,7 +122,6 @@
             margin: 0;
         }
         
-        /* Área de contenido */
         .content-area {
             flex: 1;
             width: 100%;
@@ -135,7 +132,6 @@
             z-index: 1;
         }
         
-        /* Descripción sin caja/marco */
         .description {
             flex: 1;
             font-size: 19px;
@@ -145,7 +141,6 @@
             text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);
         }
         
-        /* Imágenes sin marcos */
         .images-container {
             display: flex;
             gap: 15px;
@@ -159,7 +154,6 @@
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
         }
         
-        /* Indicadores */
         .indicators {
             position: absolute;
             bottom: 15px;
@@ -242,7 +236,9 @@
                 title: data.title || '',
                 description: data.description || '',
                 images: data.images || [],
-                background: data.background || ''
+                background: data.background || '',
+                titleSize: data.titleSize || '36',
+                descSize: data.descSize || '19'
             };
         }
 
@@ -253,21 +249,27 @@
                     title: 'TITULO CENTRADO',
                     description: 'DESCRIPCION: QUE PERMITA USAR MINÚSCULAS Y UNA CANTIDAD de unas 200 letras para poder dar una descripción completa del tema.',
                     images: [],
-                    background: ''
+                    background: '',
+                    titleSize: '36',
+                    descSize: '19'
                 },
                 {
                     order: 2,
                     title: 'SEGUNDO SLIDE',
                     description: 'Este es un ejemplo con menos texto pero que puede incluir hasta 200 caracteres si es necesario para dar contexto completo.',
                     images: ['https://picsum.photos/200/150'],
-                    background: ''
+                    background: '',
+                    titleSize: '36',
+                    descSize: '19'
                 },
                 {
                     order: 3,
                     title: 'TERCER EJEMPLO',
                     description: 'Aquí puedes poner información importante sobre eventos, anuncios o cualquier cosa que quieras destacar en tu stream.',
                     images: ['https://picsum.photos/200/151', 'https://picsum.photos/200/152'],
-                    background: ''
+                    background: '',
+                    titleSize: '36',
+                    descSize: '19'
                 }
             ];
         }
@@ -297,6 +299,7 @@
                 const title = document.createElement('h1');
                 title.className = 'title';
                 title.textContent = item.title;
+                title.style.fontSize = item.titleSize + 'px';
                 titleBox.appendChild(title);
                 div.appendChild(titleBox);
                 
@@ -306,6 +309,7 @@
                 const description = document.createElement('p');
                 description.className = 'description';
                 description.textContent = item.description;
+                description.style.fontSize = item.descSize + 'px';
                 contentArea.appendChild(description);
                 
                 if (item.images && item.images.length > 0) {
