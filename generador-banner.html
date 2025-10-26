@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador Banner Carrusel v1.0</title>
+    <title>Generador Banner Carrusel v2.0</title>
     <style>
         * {
             margin: 0;
@@ -26,7 +26,7 @@
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 40px;
-            max-width: 600px;
+            max-width: 700px;
             width: 100%;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
@@ -64,7 +64,7 @@
             font-size: 0.95em;
         }
 
-        input, select {
+        input, select, textarea {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #e0e0e0;
@@ -72,9 +72,15 @@
             font-size: 1em;
             transition: all 0.3s ease;
             background: white;
+            font-family: inherit;
         }
 
-        input:focus, select:focus {
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: #a855f7;
             box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
@@ -84,6 +90,13 @@
             font-size: 0.85em;
             color: #888;
             margin-top: 5px;
+        }
+
+        .char-count {
+            font-size: 0.85em;
+            color: #a855f7;
+            margin-top: 5px;
+            font-weight: 600;
         }
 
         .button {
@@ -203,31 +216,18 @@
             text-decoration: underline;
         }
 
-        .preview-box {
-            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        .preview-image {
-            max-width: 280px;
-            max-height: 280px;
-            border-radius: 12px;
-            box-shadow: 0 0 30px rgba(168, 85, 247, 0.6);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            margin: 10px auto;
-            display: none;
-        }
-
-        .preview-image.show {
-            display: block;
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
         }
 
         @media (max-width: 600px) {
             .container {
                 padding: 20px;
+            }
+            .row {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -236,7 +236,7 @@
     <div class="container">
         <h1>🎴 Generador Banner Carrusel</h1>
         <p class="subtitle">Banner 996x350 - Admin Personalizado</p>
-        <p class="version">v1.0 - Sistema de Cards Animadas</p>
+        <p class="version">v2.0 - Con Título, Descripción e Imágenes</p>
 
         <form id="itemForm">
             <div class="form-group">
@@ -246,39 +246,51 @@
             </div>
 
             <div class="form-group">
-                <label for="title">📝 Título de la Card (Opcional)</label>
-                <input type="text" id="title" name="title" placeholder="Ej: Evento Especial">
-                <div class="hint">Título descriptivo para identificar la card (no se muestra en el banner)</div>
+                <label for="title">📝 Título del Banner</label>
+                <input type="text" id="title" name="title" placeholder="Ej: TITULO CENTRADO" required maxlength="50">
+                <div class="hint">Aparece en grande arriba (máx. 50 caracteres)</div>
             </div>
 
             <div class="form-group">
-                <label for="imageUrl">🖼️ URL de la Imagen</label>
-                <input type="url" id="imageUrl" name="imageUrl" placeholder="https://i.imgur.com/abc123.png" required>
-                <div class="hint">URL completa de tu imagen PNG o JPG (280x280px recomendado)</div>
-                
-                <div class="info-box">
-                    <h5>📸 Cómo subir tu imagen:</h5>
-                    <p>
-                        <strong>Opción 1 - Imgur (Rápido):</strong><br>
-                        1. Ve a <a href="https://imgur.com" target="_blank">imgur.com</a><br>
-                        2. Click en "New post" y sube tu PNG/JPG<br>
-                        3. Click derecho → "Copiar dirección de imagen"<br>
-                        4. Pégala arriba<br><br>
-                        
-                        <strong>Opción 2 - GitHub:</strong><br>
-                        1. En tu repo, ve a assets/images/<br>
-                        2. Upload tu imagen<br>
-                        3. Usa: https://tu-usuario.github.io/repo/assets/images/tu-imagen.png<br><br>
-
-                        <strong>💡 Tamaño recomendado:</strong> 280x280px (cuadrada)
-                    </p>
+                <label for="description">📄 Descripción</label>
+                <textarea id="description" name="description" placeholder="Escribe aquí la descripción completa que quieres mostrar..." required maxlength="200"></textarea>
+                <div class="char-count">
+                    <span id="charCount">0</span> / 200 caracteres
                 </div>
+                <div class="hint">Texto detallado que aparece en el centro</div>
             </div>
 
-            <button type="button" class="button" onclick="previewImage()" style="background: #6c757d; margin-bottom: 10px;">👁️ Vista Previa</button>
-            
-            <div class="preview-box" id="previewBox" style="display: none;">
-                <img id="previewImage" class="preview-image" alt="Vista previa">
+            <div class="form-group">
+                <label for="background">🎨 Color de Fondo (Opcional)</label>
+                <select id="background" name="background">
+                    <option value="">Sin color específico (usa gradiente default)</option>
+                    <option value="linear-gradient(135deg, #a855f7, #ec4899)">Morado → Rosa</option>
+                    <option value="linear-gradient(135deg, #667eea, #764ba2)">Azul → Morado</option>
+                    <option value="linear-gradient(135deg, #f093fb, #f5576c)">Rosa Fuerte</option>
+                    <option value="linear-gradient(135deg, #4facfe, #00f2fe)">Azul Cyan</option>
+                    <option value="linear-gradient(135deg, #43e97b, #38f9d7)">Verde Menta</option>
+                    <option value="linear-gradient(135deg, #fa709a, #fee140)">Naranja Amarillo</option>
+                </select>
+                <div class="hint">Gradiente de fondo para esta card específica</div>
+            </div>
+
+            <div class="form-group">
+                <label for="images">🖼️ URLs de Imágenes (Opcional)</label>
+                <textarea id="images" name="images" placeholder="https://i.imgur.com/imagen1.png&#10;https://i.imgur.com/imagen2.png" rows="3"></textarea>
+                <div class="hint">Una URL por línea (máx. 3 imágenes). Deja vacío si no quieres imágenes.</div>
+                
+                <div class="info-box">
+                    <h5>📸 Cómo subir imágenes:</h5>
+                    <p>
+                        <strong>Opción 1 - Imgur:</strong><br>
+                        1. Ve a <a href="https://imgur.com" target="_blank">imgur.com</a><br>
+                        2. Sube tu imagen<br>
+                        3. Click derecho → "Copiar dirección de imagen"<br>
+                        4. Pega la URL arriba (una por línea)<br><br>
+                        
+                        <strong>💡 Tamaño recomendado:</strong> 200x150px aprox.
+                    </p>
+                </div>
             </div>
 
             <button type="submit" class="button">✨ Generar Código</button>
@@ -306,44 +318,42 @@
     </div>
 
     <script>
-        function previewImage() {
-            const imageUrl = document.getElementById('imageUrl').value;
-            
-            if (!imageUrl) {
-                alert('⚠️ Por favor ingresa una URL de imagen primero');
-                return;
-            }
+        const descriptionField = document.getElementById('description');
+        const charCountSpan = document.getElementById('charCount');
 
-            const previewBox = document.getElementById('previewBox');
-            const previewImg = document.getElementById('previewImage');
-            
-            previewImg.src = imageUrl;
-            previewBox.style.display = 'block';
-            previewImg.classList.add('show');
-            
-            previewImg.onerror = function() {
-                alert('❌ No se pudo cargar la imagen. Verifica que la URL sea correcta.');
-                previewBox.style.display = 'none';
-            };
-        }
+        descriptionField.addEventListener('input', function() {
+            charCountSpan.textContent = this.value.length;
+        });
 
         document.getElementById('itemForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const order = document.getElementById('order').value;
-            const title = document.getElementById('title').value || `Card ${order}`;
-            const imageUrl = document.getElementById('imageUrl').value;
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const background = document.getElementById('background').value;
+            const imagesText = document.getElementById('images').value.trim();
             
-            if (!imageUrl) {
-                alert('⚠️ Por favor ingresa la URL de tu imagen');
+            if (!title || !description) {
+                alert('⚠️ Por favor completa el título y la descripción');
                 return;
             }
             
-            const code = `---
+            let code = `---
 order: ${order}
-image: ${imageUrl}
 title: ${title}
----`;
+description: ${description}`;
+
+            if (background) {
+                code += `\nbackground: ${background}`;
+            }
+
+            if (imagesText) {
+                const imageUrls = imagesText.split('\n').filter(url => url.trim()).join(', ');
+                code += `\nimages: ${imageUrls}`;
+            }
+
+            code += '\n---';
             
             document.getElementById('codeBox').textContent = code;
             document.getElementById('output').classList.add('show');
