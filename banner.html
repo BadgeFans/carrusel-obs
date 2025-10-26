@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Banner OBS</title>
+    <title>Demo Morphing Full Width</title>
     <style>
         * {
             margin: 0;
@@ -12,104 +12,51 @@
         }
         
         body {
-            width: 996px;
+            width: 1920px;
             height: 350px;
             background: transparent;
             overflow: hidden;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
-        .carousel-container {
-            position: relative;
-            width: 996px;
+        /* Cristal negro transparente de 1920px */
+        .glass-overlay {
+            width: 1920px;
             height: 350px;
-            overflow: hidden;
-        }
-        
-        .carousel-wrapper {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(168, 85, 247, 0.3);
+            border-bottom: 1px solid rgba(168, 85, 247, 0.3);
             position: relative;
-            width: 100%;
-            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
-        .carousel-item {
-            position: absolute;
-            width: 100%;
+        /* Contenedor del contenido (996px centrado) */
+        .content-wrapper {
+            width: 996px;
             height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
             padding: 30px 40px;
-            border-radius: 20px;
-            transition: all 0.8s ease-in-out;
-            opacity: 0;
-            transform: translateY(100%);
-            
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-        }
-        
-        .carousel-item:nth-child(1) { 
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
-        }
-        .carousel-item:nth-child(2) { 
-            background: linear-gradient(135deg, rgba(240, 147, 251, 0.3), rgba(245, 87, 108, 0.3));
-        }
-        .carousel-item:nth-child(3) { 
-            background: linear-gradient(135deg, rgba(79, 172, 254, 0.3), rgba(0, 242, 254, 0.3));
-        }
-        .carousel-item:nth-child(4) { 
-            background: linear-gradient(135deg, rgba(67, 233, 123, 0.3), rgba(56, 249, 215, 0.3));
-        }
-        .carousel-item:nth-child(5) { 
-            background: linear-gradient(135deg, rgba(250, 112, 154, 0.3), rgba(254, 225, 64, 0.3));
-        }
-        
-        .carousel-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: 20px;
-            background: linear-gradient(
-                135deg,
-                rgba(255, 255, 255, 0.2) 0%,
-                rgba(255, 255, 255, 0.05) 50%,
-                rgba(255, 255, 255, 0) 100%
-            );
-            pointer-events: none;
-        }
-        
-        .carousel-item.active {
-            opacity: 1;
-            transform: translateY(0);
-            z-index: 2;
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-        }
-        
-        .carousel-item.prev {
-            opacity: 0;
-            transform: translateY(-100%);
-            z-index: 1;
-        }
-        
-        .carousel-item.next {
-            opacity: 0;
-            transform: translateY(100%);
-            z-index: 0;
+            position: relative;
         }
         
         .title-box {
             width: 100%;
             margin-bottom: 25px;
             text-align: center;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .title {
@@ -118,259 +65,263 @@
             color: #ffffff;
             text-transform: uppercase;
             letter-spacing: 3px;
-            text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8);
-            margin: 0;
+            text-shadow: 
+                3px 3px 10px rgba(0, 0, 0, 0.8),
+                0 0 20px rgba(168, 85, 247, 0.6);
+            position: relative;
         }
         
-        .content-area {
+        .description-box {
             flex: 1;
             width: 100%;
             display: flex;
-            gap: 25px;
             align-items: center;
-            position: relative;
-            z-index: 1;
         }
         
         .description {
-            flex: 1;
             font-size: 19px;
             line-height: 1.6;
             color: #ffffff;
             text-align: left;
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);
+            text-shadow: 
+                2px 2px 8px rgba(0, 0, 0, 0.9),
+                0 0 10px rgba(168, 85, 247, 0.4);
+            position: relative;
         }
         
-        .images-container {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-        
-        .content-image {
-            max-height: 160px;
-            max-width: 210px;
-            border-radius: 12px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
-        }
-        
-        .indicators {
+        .language-indicator {
             position: absolute;
-            bottom: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 8px;
-            z-index: 10;
-        }
-        
-        .indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
+            top: 10px;
+            right: 10px;
+            padding: 8px 15px;
+            background: rgba(168, 85, 247, 0.8);
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
             backdrop-filter: blur(5px);
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            z-index: 10;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
         }
         
-        .indicator.active {
-            background: rgba(255, 255, 255, 0.9);
-            width: 24px;
-            border-radius: 4px;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        /* Barra de progreso en toda la barra */
+        .timer-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #a855f7, #ec4899);
+            transition: width 0.1s linear;
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.8);
+        }
+        
+        /* Brillo sutil en los bordes */
+        .glass-overlay::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(168, 85, 247, 0.6) 50%, 
+                transparent 100%);
+        }
+        
+        .glass-overlay::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(236, 72, 153, 0.6) 50%, 
+                transparent 100%);
+        }
+        
+        /* Efecto Glitch */
+        .glitch {
+            animation: glitch 0.8s ease-in-out;
+        }
+        
+        @keyframes glitch {
+            0% {
+                transform: translate(0);
+                text-shadow: 
+                    3px 3px 10px rgba(0, 0, 0, 0.8),
+                    0 0 20px rgba(168, 85, 247, 0.6);
+            }
+            10% {
+                transform: translate(-3px, 2px);
+                text-shadow: 
+                    -3px 0 0 #ff00de,
+                    3px 0 0 #00fff9,
+                    0 0 20px rgba(168, 85, 247, 0.8);
+            }
+            20% {
+                transform: translate(2px, -3px);
+                text-shadow: 
+                    3px 0 0 #ff00de,
+                    -3px 0 0 #00fff9,
+                    0 0 25px rgba(236, 72, 153, 0.8);
+            }
+            30% {
+                transform: translate(-2px, 1px);
+                opacity: 0.8;
+            }
+            40% {
+                transform: translate(1px, -2px);
+                text-shadow: 
+                    -5px 0 0 #a855f7,
+                    5px 0 0 #ec4899,
+                    0 0 30px rgba(168, 85, 247, 1);
+            }
+            50% {
+                transform: translate(0);
+                opacity: 0.3;
+                filter: blur(3px);
+                text-shadow: 
+                    -2px 0 0 #ff00de,
+                    2px 0 0 #00fff9;
+            }
+            60% {
+                transform: translate(2px, 1px);
+                opacity: 0.6;
+            }
+            70% {
+                transform: translate(-1px, -2px);
+                text-shadow: 
+                    3px 0 0 #a855f7,
+                    -3px 0 0 #ec4899;
+            }
+            80% {
+                transform: translate(1px, 2px);
+                opacity: 0.9;
+                filter: blur(1px);
+            }
+            90% {
+                transform: translate(0);
+                text-shadow: 
+                    1px 0 0 #a855f7,
+                    -1px 0 0 #ec4899;
+            }
+            100% {
+                transform: translate(0);
+                opacity: 1;
+                filter: blur(0);
+                text-shadow: 
+                    3px 3px 10px rgba(0, 0, 0, 0.8),
+                    0 0 20px rgba(168, 85, 247, 0.6);
+            }
+        }
+        
+        .glass-glitch {
+            animation: glassGlitch 0.8s ease-in-out;
+        }
+        
+        @keyframes glassGlitch {
+            0%, 100% {
+                background: rgba(0, 0, 0, 0.5);
+            }
+            25% {
+                background: rgba(168, 85, 247, 0.2);
+            }
+            50% {
+                background: rgba(0, 0, 0, 0.7);
+            }
+            75% {
+                background: rgba(236, 72, 153, 0.2);
+            }
         }
     </style>
 </head>
 <body>
-    <div class="carousel-container">
-        <div class="carousel-wrapper" id="carouselWrapper"></div>
-        <div class="indicators" id="indicatorsContainer"></div>
+    <div class="glass-overlay" id="glassOverlay">
+        <div class="content-wrapper">
+            <div class="language-indicator" id="langIndicator">🇺🇸 ENGLISH</div>
+            <div class="title-box">
+                <h1 class="title" id="title">NEW STREAM SCHEDULE</h1>
+            </div>
+            <div class="description-box">
+                <p class="description" id="description">
+                    Streaming Monday to Friday from 8 PM to 11 PM EST. Join us for gaming, chat, and fun times!
+                </p>
+            </div>
+        </div>
+        <div class="timer-bar" id="timerBar"></div>
     </div>
 
     <script>
-        async function loadBannerItems() {
-            try {
-                const response = await fetch('https://api.github.com/repos/BadgeFans/carrusel-obs/contents/content/banner');
-                const files = await response.json();
-                
-                const mdFiles = files.filter(file => file.name.endsWith('.md'));
-                const items = [];
-                
-                for (const file of mdFiles) {
-                    const contentResponse = await fetch(file.download_url);
-                    const content = await contentResponse.text();
-                    const item = parseFrontmatter(content);
-                    if (item) items.push(item);
-                }
-                
-                return items.sort((a, b) => a.order - b.order);
-            } catch (error) {
-                return getExampleData();
+        const config = {
+            timePerLanguage: 4000,
+            glitchDuration: 800,
+            timerUpdateInterval: 50
+        };
+
+        const content = {
+            en: {
+                title: "NEW STREAM SCHEDULE",
+                description: "Streaming Monday to Friday from 8 PM to 11 PM EST. Join us for gaming, chat, and fun times!",
+                flag: "🇺🇸 ENGLISH"
+            },
+            es: {
+                title: "NUEVO HORARIO DE STREAM",
+                description: "Transmitiendo de lunes a viernes de 8 PM a 11 PM EST. ¡Únete para juegos, chat y buenos momentos!",
+                flag: "🇪🇸 ESPAÑOL"
+            }
+        };
+
+        let currentLang = 'en';
+        let startTime;
+        let timerInterval;
+
+        function glitchTransition() {
+            const titleEl = document.getElementById('title');
+            const descEl = document.getElementById('description');
+            const langIndicator = document.getElementById('langIndicator');
+            const glassOverlay = document.getElementById('glassOverlay');
+            
+            titleEl.classList.add('glitch');
+            descEl.classList.add('glitch');
+            glassOverlay.classList.add('glass-glitch');
+            
+            setTimeout(() => {
+                currentLang = currentLang === 'en' ? 'es' : 'en';
+                titleEl.textContent = content[currentLang].title;
+                descEl.textContent = content[currentLang].description;
+                langIndicator.textContent = content[currentLang].flag;
+            }, config.glitchDuration / 2);
+            
+            setTimeout(() => {
+                titleEl.classList.remove('glitch');
+                descEl.classList.remove('glitch');
+                glassOverlay.classList.remove('glass-glitch');
+            }, config.glitchDuration);
+        }
+
+        function updateTimer() {
+            const elapsed = Date.now() - startTime;
+            const progress = (elapsed / config.timePerLanguage) * 100;
+            const timerBar = document.getElementById('timerBar');
+            
+            if (progress >= 100) {
+                timerBar.style.width = '0%';
+                glitchTransition();
+                startTime = Date.now();
+            } else {
+                timerBar.style.width = progress + '%';
             }
         }
 
-        function parseFrontmatter(content) {
-            const match = content.match(/^---\n([\s\S]*?)\n---/);
-            if (!match) return null;
-            
-            const frontmatter = match[1];
-            const lines = frontmatter.split('\n');
-            const data = {};
-            
-            lines.forEach(line => {
-                const [key, ...valueParts] = line.split(':');
-                if (key && valueParts.length) {
-                    const value = valueParts.join(':').trim();
-                    if (key.trim() === 'images') {
-                        data.images = value.split(',').map(img => img.trim());
-                    } else {
-                        data[key.trim()] = value;
-                    }
-                }
-            });
-            
-            return {
-                order: parseInt(data.order) || 0,
-                title: data.title || '',
-                description: data.description || '',
-                images: data.images || [],
-                background: data.background || '',
-                titleSize: data.titleSize || '36',
-                descSize: data.descSize || '19'
-            };
+        function init() {
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimer, config.timerUpdateInterval);
         }
 
-        function getExampleData() {
-            return [
-                {
-                    order: 1,
-                    title: 'TITULO CENTRADO',
-                    description: 'DESCRIPCION: QUE PERMITA USAR MINÚSCULAS Y UNA CANTIDAD de unas 200 letras para poder dar una descripción completa del tema.',
-                    images: [],
-                    background: '',
-                    titleSize: '36',
-                    descSize: '19'
-                },
-                {
-                    order: 2,
-                    title: 'SEGUNDO SLIDE',
-                    description: 'Este es un ejemplo con menos texto pero que puede incluir hasta 200 caracteres si es necesario para dar contexto completo.',
-                    images: ['https://picsum.photos/200/150'],
-                    background: '',
-                    titleSize: '36',
-                    descSize: '19'
-                },
-                {
-                    order: 3,
-                    title: 'TERCER EJEMPLO',
-                    description: 'Aquí puedes poner información importante sobre eventos, anuncios o cualquier cosa que quieras destacar en tu stream.',
-                    images: ['https://picsum.photos/200/151', 'https://picsum.photos/200/152'],
-                    background: '',
-                    titleSize: '36',
-                    descSize: '19'
-                }
-            ];
-        }
-
-        let items = [];
-        let currentIndex = 0;
-        let itemElements = [];
-        let indicatorElements = [];
-
-        async function initCarousel() {
-            items = await loadBannerItems();
-            const wrapper = document.getElementById('carouselWrapper');
-            const indicatorsContainer = document.getElementById('indicatorsContainer');
-            
-            items.forEach((item, index) => {
-                const div = document.createElement('div');
-                div.className = 'carousel-item';
-                if (index === 0) div.classList.add('active');
-                else div.classList.add('next');
-                
-                if (item.background) {
-                    div.style.background = item.background;
-                }
-                
-                const titleBox = document.createElement('div');
-                titleBox.className = 'title-box';
-                const title = document.createElement('h1');
-                title.className = 'title';
-                title.textContent = item.title;
-                title.style.fontSize = item.titleSize + 'px';
-                titleBox.appendChild(title);
-                div.appendChild(titleBox);
-                
-                const contentArea = document.createElement('div');
-                contentArea.className = 'content-area';
-                
-                const description = document.createElement('p');
-                description.className = 'description';
-                description.textContent = item.description;
-                description.style.fontSize = item.descSize + 'px';
-                contentArea.appendChild(description);
-                
-                if (item.images && item.images.length > 0) {
-                    const imagesContainer = document.createElement('div');
-                    imagesContainer.className = 'images-container';
-                    
-                    item.images.forEach(imgUrl => {
-                        if (imgUrl) {
-                            const img = document.createElement('img');
-                            img.className = 'content-image';
-                            img.src = imgUrl;
-                            imagesContainer.appendChild(img);
-                        }
-                    });
-                    
-                    contentArea.appendChild(imagesContainer);
-                }
-                
-                div.appendChild(contentArea);
-                wrapper.appendChild(div);
-                itemElements.push(div);
-                
-                const indicator = document.createElement('div');
-                indicator.className = 'indicator';
-                if (index === 0) indicator.classList.add('active');
-                indicator.addEventListener('click', () => {
-                    currentIndex = index;
-                    changeSlide();
-                });
-                indicatorsContainer.appendChild(indicator);
-                indicatorElements.push(indicator);
-            });
-            
-            setInterval(changeSlide, 8000);
-        }
-
-        function changeSlide() {
-            if (itemElements.length === 0) return;
-            
-            itemElements.forEach(item => {
-                item.classList.remove('active', 'prev', 'next');
-            });
-            
-            indicatorElements.forEach(ind => {
-                ind.classList.remove('active');
-            });
-            
-            const totalItems = itemElements.length;
-            const prevIndex = currentIndex === 0 ? totalItems - 1 : currentIndex - 1;
-            const nextIndex = (currentIndex + 1) % totalItems;
-            
-            itemElements[prevIndex].classList.add('prev');
-            itemElements[currentIndex].classList.add('active');
-            itemElements[nextIndex].classList.add('next');
-            
-            indicatorElements[currentIndex].classList.add('active');
-            
-            currentIndex = (currentIndex + 1) % totalItems;
-        }
-
-        window.addEventListener('DOMContentLoaded', initCarousel);
+        window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
