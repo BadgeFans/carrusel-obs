@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Demo Morphing Full Width</title>
+    <title>Demo Morphing Full Width Clean</title>
     <style>
         * {
             margin: 0;
@@ -22,7 +22,6 @@
             align-items: center;
         }
         
-        /* Cristal negro transparente de 1920px */
         .glass-overlay {
             width: 1920px;
             height: 350px;
@@ -37,7 +36,6 @@
             align-items: center;
         }
         
-        /* Contenedor del contenido (996px centrado) */
         .content-wrapper {
             width: 996px;
             height: 100%;
@@ -104,18 +102,6 @@
             box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
         }
         
-        /* Barra de progreso en toda la barra */
-        .timer-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #a855f7, #ec4899);
-            transition: width 0.1s linear;
-            box-shadow: 0 0 10px rgba(168, 85, 247, 0.8);
-        }
-        
-        /* Brillo sutil en los bordes */
         .glass-overlay::before {
             content: '';
             position: absolute;
@@ -142,7 +128,6 @@
                 transparent 100%);
         }
         
-        /* Efecto Glitch */
         .glitch {
             animation: glitch 0.8s ease-in-out;
         }
@@ -251,14 +236,12 @@
                 </p>
             </div>
         </div>
-        <div class="timer-bar" id="timerBar"></div>
     </div>
 
     <script>
         const config = {
             timePerLanguage: 4000,
-            glitchDuration: 800,
-            timerUpdateInterval: 50
+            glitchDuration: 800
         };
 
         const content = {
@@ -275,8 +258,6 @@
         };
 
         let currentLang = 'en';
-        let startTime;
-        let timerInterval;
 
         function glitchTransition() {
             const titleEl = document.getElementById('title');
@@ -302,26 +283,11 @@
             }, config.glitchDuration);
         }
 
-        function updateTimer() {
-            const elapsed = Date.now() - startTime;
-            const progress = (elapsed / config.timePerLanguage) * 100;
-            const timerBar = document.getElementById('timerBar');
-            
-            if (progress >= 100) {
-                timerBar.style.width = '0%';
-                glitchTransition();
-                startTime = Date.now();
-            } else {
-                timerBar.style.width = progress + '%';
-            }
+        function startLoop() {
+            setInterval(glitchTransition, config.timePerLanguage);
         }
 
-        function init() {
-            startTime = Date.now();
-            timerInterval = setInterval(updateTimer, config.timerUpdateInterval);
-        }
-
-        window.addEventListener('DOMContentLoaded', init);
+        window.addEventListener('DOMContentLoaded', startLoop);
     </script>
 </body>
 </html>
