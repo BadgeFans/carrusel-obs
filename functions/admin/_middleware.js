@@ -1,6 +1,6 @@
 export async function onRequest(context) {
-  const AUTH_USER = 'admin';
-  const AUTH_PASS = 'MiClaveSegura123';
+  const AUTH_USER = context.env.ADMIN_USER || 'admin';
+  const AUTH_PASS = context.env.ADMIN_PASS || 'default';
 
   const auth = context.request.headers.get('authorization') || '';
   
