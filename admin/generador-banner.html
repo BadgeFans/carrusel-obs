@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Generador Banner Carrusel v3.1</title>
+  <title>Generador Banner Carrusel v3.2</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -67,15 +67,36 @@
     .instructions h4 { color: #856404; margin-bottom: 8px; }
     .instructions ol { margin-left: 20px; color: #856404; }
     .instructions li { margin-bottom: 6px; }
+
+    .timing-section { background: #e8f5e9; padding: 16px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #4caf50; }
+    .timing-section h3 { color: #2e7d32; margin-bottom: 12px; font-size: 1.1em; }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🎴 Generador Banner Carrusel</h1>
-    <p class="subtitle">Barra 1920x350 (contenido centrado 996px) · Bilingüe EN/ES</p>
-    <p class="version">v3.1 · Morphing + Glitch · Tinte suave</p>
+    <p class="subtitle">Barra 1920x350 · Layout 50/50 · Bilingüe EN/ES</p>
+    <p class="version">v3.2 · Control de tiempos + Imagen grande</p>
 
     <form id="itemForm">
+      
+      <!-- Sección de tiempos -->
+      <div class="timing-section">
+        <h3>⏱️ Control de Tiempos (Global)</h3>
+        <div class="row">
+          <div class="form-group">
+            <label for="timeLang">Tiempo por idioma (seg)</label>
+            <input type="number" id="timeLang" min="2" max="15" value="5" step="0.5">
+            <div class="hint">Tiempo que dura cada idioma antes de cambiar</div>
+          </div>
+          <div class="form-group">
+            <label for="timeCard">Tiempo total tarjeta (seg)</label>
+            <input type="number" id="timeCard" min="5" max="60" value="10" step="1">
+            <div class="hint">Tiempo total antes de pasar a la siguiente tarjeta</div>
+          </div>
+        </div>
+      </div>
+
       <div class="form-group">
         <label for="order">🔢 Orden de Aparición</label>
         <input type="number" id="order" name="order" min="1" max="50" value="1" required>
@@ -97,18 +118,18 @@
         <div class="form-group">
           <label for="titleSize">📏 Tamaño Título</label>
           <div class="slider-container">
-            <input type="range" id="titleSize" name="titleSize" min="24" max="54" value="36">
-            <span class="size-value"><span id="titleSizeValue">36</span>px</span>
+            <input type="range" id="titleSize" name="titleSize" min="24" max="54" value="42">
+            <span class="size-value"><span id="titleSizeValue">42</span>px</span>
           </div>
-          <div class="hint">24-54px (default 36px)</div>
+          <div class="hint">24-54px (default 42px)</div>
         </div>
         <div class="form-group">
           <label for="descSize">📏 Tamaño Descripción</label>
           <div class="slider-container">
-            <input type="range" id="descSize" name="descSize" min="14" max="28" value="19">
-            <span class="size-value"><span id="descSizeValue">19</span>px</span>
+            <input type="range" id="descSize" name="descSize" min="14" max="28" value="22">
+            <span class="size-value"><span id="descSizeValue">22</span>px</span>
           </div>
-          <div class="hint">14-28px (default 19px)</div>
+          <div class="hint">14-28px (default 22px)</div>
         </div>
       </div>
 
@@ -116,12 +137,12 @@
         <label>📄 Descripción (EN / ES)</label>
         <div class="char-row">
           <div class="col">
-            <textarea id="description" placeholder="Streaming Monday to Friday from 8 PM to 11 PM EST..." maxlength="250" required></textarea>
-            <div class="hint"><span id="charCountEN">0</span> / 250 (EN)</div>
+            <textarea id="description" placeholder="Streaming Monday to Friday from 8 PM to 11 PM EST..." maxlength="350" required></textarea>
+            <div class="hint"><span id="charCountEN">0</span> / 350 (EN)</div>
           </div>
           <div class="col">
-            <textarea id="descriptionES" placeholder="Transmitiendo de lunes a viernes de 8 PM a 11 PM EST..." maxlength="250" required></textarea>
-            <div class="hint"><span id="charCountES">0</span> / 250 (ES)</div>
+            <textarea id="descriptionES" placeholder="Transmitiendo de lunes a viernes de 8 PM a 11 PM EST..." maxlength="350" required></textarea>
+            <div class="hint"><span id="charCountES">0</span> / 350 (ES)</div>
           </div>
         </div>
       </div>
@@ -140,23 +161,16 @@
         <div class="hint">Se usará como capa de color suave sobre el cristal (opcional)</div>
       </div>
 
-      <div class="form-group">
-        <label for="images">🖼️ URLs de Imágenes (Opcional, columna derecha)</label>
-        <textarea id="images" placeholder="https://i.imgur.com/imagen1.png
-https://i.imgur.com/imagen2.png" rows="3"></textarea>
-        <div class="hint">Una URL por línea (máx. 3).</div>
-      </div>
-
       <div class="row">
         <div class="form-group">
           <label for="imageEN">🖼️ Imagen (English) opcional</label>
           <input type="url" id="imageEN" placeholder="https://i.imgur.com/icon-en.png">
-          <div class="hint">Se muestra cuando el texto está en inglés (EN).</div>
+          <div class="hint">Imagen grande derecha (700x270px aprox)</div>
         </div>
         <div class="form-group">
           <label for="imageES">🖼️ Imagen (Español) opcional</label>
           <input type="url" id="imageES" placeholder="https://i.imgur.com/icon-es.png">
-          <div class="hint">Se muestra cuando el texto está en español (ES).</div>
+          <div class="hint">Imagen grande derecha (700x270px aprox)</div>
         </div>
       </div>
 
@@ -171,11 +185,12 @@ https://i.imgur.com/imagen2.png" rows="3"></textarea>
       <div class="instructions">
         <h4>📌 Cómo usarlo</h4>
         <ol>
-          <li>Click en “Copiar Código”.</li>
+          <li>Click en "Copiar Código".</li>
           <li>Ve a tu repo: <code>carrusel-obs/content/banner/</code>.</li>
-          <li>“Add file” → “Create new file”.</li>
+          <li>"Add file" → "Create new file".</li>
           <li>Pega el contenido y nómbralo: <code id="fileName"></code></li>
           <li>Commit y espera 1-2 minutos para verlo en el banner.</li>
+          <li><strong>Nota:</strong> Los tiempos se configuran globalmente en banner.html</li>
         </ol>
       </div>
     </div>
@@ -203,7 +218,6 @@ https://i.imgur.com/imagen2.png" rows="3"></textarea>
       const description = descEN.value.trim();
       const descriptionES = descES.value.trim();
       const background = document.getElementById('background').value;
-      const imagesText = document.getElementById('images').value.trim();
 
       const imageEN = document.getElementById('imageEN').value.trim();
       const imageES = document.getElementById('imageES').value.trim();
@@ -223,12 +237,6 @@ titleSize: ${titleSize.value}
 descSize: ${descSize.value}`;
 
       if (background) code += `\nbackground: ${background}`;
-
-      if (imagesText) {
-        const list = imagesText.split('\n').map(s => s.trim()).filter(Boolean).join(', ');
-        code += `\nimages: ${list}`;
-      }
-
       if (imageEN) code += `\nimageEN: ${imageEN}`;
       if (imageES) code += `\nimageES: ${imageES}`;
 
@@ -240,6 +248,11 @@ descSize: ${descSize.value}`;
       const fileName = title.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-') + '.md';
       document.getElementById('fileName').textContent = fileName;
       document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
+
+      // Mostrar tiempos configurados
+      const timeLang = document.getElementById('timeLang').value;
+      const timeCard = document.getElementById('timeCard').value;
+      console.log(`⏱️ Tiempos sugeridos: ${timeLang}s por idioma, ${timeCard}s por tarjeta`);
     });
 
     function copyCode() {
