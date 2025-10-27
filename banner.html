@@ -60,16 +60,24 @@
         padding:30px 40px; position:relative;
     }
 
-    /* Imagen por idioma (arriba-derecha) */
+    /* Imagen grande derecha */
     #langImage {
-        position:absolute; top:22px; right:22px; max-height:64px; max-width:160px;
-        border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.35); display:none;
+        position:absolute; 
+        top: 50%; 
+        right: 40px; 
+        transform: translateY(-50%);
+        max-height: 280px; 
+        max-width: 450px;
+        border-radius: 12px; 
+        box-shadow: 0 8px 30px rgba(0,0,0,.5); 
+        display: none;
+        object-fit: cover;
     }
 
-    .title-box { width:100%; margin-bottom:25px; text-align:center; min-height:50px; display:flex; align-items:center; justify-content:center; }
+    .title-box { width:100%; margin-bottom:25px; text-align:center; min-height:50px; display:flex; align-items:center; justify-content:center; z-index:2; }
     .title { font-size:36px; font-weight:bold; color:#fff; text-transform:uppercase; letter-spacing:3px; text-shadow: 3px 3px 10px rgba(0,0,0,0.8); }
-    .description-box { flex:1; width:100%; display:flex; align-items:center; gap:20px; }
-    .description { flex:1; font-size:19px; line-height:1.6; color:#fff; text-align:left; text-shadow: 2px 2px 8px rgba(0,0,0,0.9); }
+    .description-box { flex:1; width:55%; display:flex; align-items:center; z-index:2; }
+    .description { font-size:19px; line-height:1.6; color:#fff; text-align:left; text-shadow: 2px 2px 8px rgba(0,0,0,0.9); }
 
     /* Glitch minimal */
     .glitch { animation: glitch .8s ease-in-out; }
@@ -104,7 +112,6 @@
     </div>
 
     <script>
-        // Opacidad del tinte (0.00 a 0.30 recomendado)
         const TINT_OPACITY = 0.15;
         const config = { timePerLanguage: 4000, glitchDuration: 800 };
 
@@ -156,8 +163,8 @@
                 descriptionES:'Transmitiendo de lunes a viernes de 8 PM a 11 PM EST. ¡Únete para juegos, chat y buenos momentos!',
                 titleSize:'36', descSize:'19',
                 background:'linear-gradient(135deg, #a855f7, #ec4899)',
-                imageEN:'https://i.imgur.com/abcdEN.png',
-                imageES:'https://i.imgur.com/abcdES.png'
+                imageEN:'https://via.placeholder.com/450x280/a855f7/fff?text=EN',
+                imageES:'https://via.placeholder.com/450x280/ec4899/fff?text=ES'
             }];
         }
 
@@ -169,11 +176,9 @@
             const tint=document.getElementById('tint');
             const img=document.getElementById('langImage');
 
-            // Tipografías
             t.style.fontSize = (item.titleSize||'36')+'px';
             d.style.fontSize = (item.descSize||'19')+'px';
 
-            // Tinte
             if (item.background) {
                 tint.style.background = item.background;
                 tint.style.opacity = TINT_OPACITY;
@@ -182,7 +187,6 @@
                 tint.style.display = 'none';
             }
 
-            // Imagen inicial (EN prioritario)
             if (item.imageEN || item.imageES) {
                 img.style.display = 'block';
                 img.src = item.imageEN || item.imageES;
