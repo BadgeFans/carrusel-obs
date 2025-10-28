@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Generador Banner Carrusel v3.2</title>
+  <title>Generador Banner Carrusel v3.3</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -67,35 +67,15 @@
     .instructions h4 { color: #856404; margin-bottom: 8px; }
     .instructions ol { margin-left: 20px; color: #856404; }
     .instructions li { margin-bottom: 6px; }
-
-    .timing-section { background: #e8f5e9; padding: 16px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #4caf50; }
-    .timing-section h3 { color: #2e7d32; margin-bottom: 12px; font-size: 1.1em; }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🎴 Generador Banner Carrusel</h1>
     <p class="subtitle">Barra 1920x350 · Layout 50/50 · Bilingüe EN/ES</p>
-    <p class="version">v3.2 · Control de tiempos + Imagen grande</p>
+    <p class="version">v3.3 · Cristal negro + Tamaños personalizables</p>
 
     <form id="itemForm">
-      
-      <!-- Sección de tiempos -->
-      <div class="timing-section">
-        <h3>⏱️ Control de Tiempos (Global)</h3>
-        <div class="row">
-          <div class="form-group">
-            <label for="timeLang">Tiempo por idioma (seg)</label>
-            <input type="number" id="timeLang" min="2" max="15" value="5" step="0.5">
-            <div class="hint">Tiempo que dura cada idioma antes de cambiar</div>
-          </div>
-          <div class="form-group">
-            <label for="timeCard">Tiempo total tarjeta (seg)</label>
-            <input type="number" id="timeCard" min="5" max="60" value="10" step="1">
-            <div class="hint">Tiempo total antes de pasar a la siguiente tarjeta</div>
-          </div>
-        </div>
-      </div>
 
       <div class="form-group">
         <label for="order">🔢 Orden de Aparición</label>
@@ -147,30 +127,29 @@
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="background">🎨 Fondo (opcional)</label>
-        <select id="background">
-          <option value="">Sin especificar (usa por defecto)</option>
-          <option value="linear-gradient(135deg, #a855f7, #ec4899)">Morado → Rosa</option>
-          <option value="linear-gradient(135deg, #667eea, #764ba2)">Azul → Morado</option>
-          <option value="linear-gradient(135deg, #f093fb, #f5576c)">Rosa fuerte</option>
-          <option value="linear-gradient(135deg, #4facfe, #00f2fe)">Azul cyan</option>
-          <option value="linear-gradient(135deg, #43e97b, #38f9d7)">Verde menta</option>
-          <option value="linear-gradient(135deg, #fa709a, #fee140)">Naranja amarillo</option>
-        </select>
-        <div class="hint">Se usará como capa de color suave sobre el cristal (opcional)</div>
-      </div>
-
       <div class="row">
         <div class="form-group">
           <label for="imageEN">🖼️ Imagen (English) opcional</label>
           <input type="url" id="imageEN" placeholder="https://i.imgur.com/icon-en.png">
-          <div class="hint">Imagen grande derecha (700x270px aprox)</div>
+          <div class="hint">URL de la imagen para inglés</div>
         </div>
         <div class="form-group">
           <label for="imageES">🖼️ Imagen (Español) opcional</label>
           <input type="url" id="imageES" placeholder="https://i.imgur.com/icon-es.png">
-          <div class="hint">Imagen grande derecha (700x270px aprox)</div>
+          <div class="hint">URL de la imagen para español</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label for="imageWidth">📐 Ancho imagen (px)</label>
+          <input type="number" id="imageWidth" min="50" max="900" value="300">
+          <div class="hint">Ancho máximo (default: 300px)</div>
+        </div>
+        <div class="form-group">
+          <label for="imageHeight">📐 Alto imagen (px)</label>
+          <input type="number" id="imageHeight" min="50" max="600" value="600">
+          <div class="hint">Alto máximo (default: 600px)</div>
         </div>
       </div>
 
@@ -217,10 +196,10 @@
       const titleES = document.getElementById('titleES').value.trim();
       const description = descEN.value.trim();
       const descriptionES = descES.value.trim();
-      const background = document.getElementById('background').value;
-
       const imageEN = document.getElementById('imageEN').value.trim();
       const imageES = document.getElementById('imageES').value.trim();
+      const imageWidth = document.getElementById('imageWidth').value;
+      const imageHeight = document.getElementById('imageHeight').value;
 
       if (!title || !titleES || !description || !descriptionES) {
         alert('⚠️ Completa títulos y descripciones en ambos idiomas.');
@@ -236,9 +215,10 @@ descriptionES: ${descriptionES}
 titleSize: ${titleSize.value}
 descSize: ${descSize.value}`;
 
-      if (background) code += `\nbackground: ${background}`;
       if (imageEN) code += `\nimageEN: ${imageEN}`;
       if (imageES) code += `\nimageES: ${imageES}`;
+      if (imageWidth !== '300') code += `\nimageWidth: ${imageWidth}`;
+      if (imageHeight !== '600') code += `\nimageHeight: ${imageHeight}`;
 
       code += `\n---`;
 
@@ -248,11 +228,6 @@ descSize: ${descSize.value}`;
       const fileName = title.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-') + '.md';
       document.getElementById('fileName').textContent = fileName;
       document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
-
-      // Mostrar tiempos configurados
-      const timeLang = document.getElementById('timeLang').value;
-      const timeCard = document.getElementById('timeCard').value;
-      console.log(`⏱️ Tiempos sugeridos: ${timeLang}s por idioma, ${timeCard}s por tarjeta`);
     });
 
     function copyCode() {
