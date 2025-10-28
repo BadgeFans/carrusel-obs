@@ -40,8 +40,8 @@ body {
 
 .image-col { flex:1; display:flex; align-items:center; justify-content:center; max-width:800px; z-index:2; }
 #langImage {
-    width:100%; max-width:300px; height:auto; max-height:600px; border-radius:16px; 
-    box-shadow: 0 12px 40px rgba(0,0,0,.6); display:none; object-fit:cover;
+    width:100%; height:auto; border-radius:16px; 
+    box-shadow: 0 12px 40px rgba(0,0,0,.6); display:none; object-fit:contain;
 }
 
 .glitch { animation: glitch .8s ease-in-out; }
@@ -68,8 +68,8 @@ body {
 
 <script>
 const config = {
-    timePerLanguage: 10000,
-    timePerCard: 20000,
+    timePerLanguage: 15000,
+    timePerCard: 30000,
     glitchDuration: 1200
 };
 
@@ -107,7 +107,9 @@ async function loadBannerItems() {
             titleSize:'42',
             descSize:'22',
             imageEN:'https://via.placeholder.com/300x600/555/fff?text=English',
-            imageES:'https://via.placeholder.com/300x600/777/fff?text=Español'
+            imageES:'https://via.placeholder.com/300x600/777/fff?text=Español',
+            imageWidth:'300',
+            imageHeight:'600'
         }];
     }
 }
@@ -132,7 +134,9 @@ function parseFrontmatter(content) {
         titleSize: data.titleSize || '42',
         descSize: data.descSize || '22',
         imageEN: data.imageEN || '',
-        imageES: data.imageES || ''
+        imageES: data.imageES || '',
+        imageWidth: data.imageWidth || '300',
+        imageHeight: data.imageHeight || '600'
     };
 }
 
@@ -146,6 +150,8 @@ function applyItem(item) {
 
     if (item.imageEN || item.imageES) {
         img.style.display = 'block';
+        img.style.maxWidth = (item.imageWidth || '300') + 'px';
+        img.style.maxHeight = (item.imageHeight || '600') + 'px';
         img.src = (lang === 'en') ? (item.imageEN || item.imageES) : (item.imageES || item.imageEN);
     } else {
         img.style.display = 'none';
@@ -168,6 +174,8 @@ function swapLanguage(item) {
         const nextSrc = (lang === 'en') ? (item.imageEN || item.imageES) : (item.imageES || item.imageEN);
         if (nextSrc) {
             img.style.display = 'block';
+            img.style.maxWidth = (item.imageWidth || '300') + 'px';
+            img.style.maxHeight = (item.imageHeight || '600') + 'px';
             img.src = nextSrc;
         } else {
             img.style.display = 'none';
