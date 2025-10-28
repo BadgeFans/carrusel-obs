@@ -68,9 +68,9 @@ body {
 
 <script>
 const config = {
-    timePerLanguage: 5000,
-    timePerCard: 10000,
-    glitchDuration: 800
+    timePerLanguage: 9000,
+    timePerCard: 18000,
+    glitchDuration: 1200
 };
 
 let items = [];
@@ -106,8 +106,8 @@ async function loadBannerItems() {
             descriptionES:'Transmitiendo de lunes a viernes de 8 PM a 11 PM EST. ¡Únete!',
             titleSize:'42',
             descSize:'22',
-            imageEN:'https://via.placeholder.com/700x270/555/fff?text=English',
-            imageES:'https://via.placeholder.com/700x270/777/fff?text=Español'
+            imageEN:'https://via.placeholder.com/300x600/555/fff?text=English',
+            imageES:'https://via.placeholder.com/300x600/777/fff?text=Español'
         }];
     }
 }
@@ -186,23 +186,16 @@ function showCard(idx) {
     const item = items[idx];
     lang = 'en';
     
-    // Limpiar imagen anterior
     const img = document.getElementById('langImage');
     img.style.display = 'none';
     img.src = '';
     
-    // Aplicar nueva tarjeta
     applyItem(item);
     document.getElementById('title').textContent = item.title;
     document.getElementById('description').textContent = item.description;
     
-    // Programar cambios de idioma
-    let swaps = Math.floor(config.timePerCard / config.timePerLanguage);
-    for (let i = 1; i < swaps; i++) {
-        allTimeouts.push(setTimeout(() => swapLanguage(item), i * config.timePerLanguage));
-    }
+    allTimeouts.push(setTimeout(() => swapLanguage(item), config.timePerLanguage));
     
-    // Programar siguiente tarjeta
     allTimeouts.push(setTimeout(() => {
         cardIndex = (cardIndex + 1) % items.length;
         showCard(cardIndex);
