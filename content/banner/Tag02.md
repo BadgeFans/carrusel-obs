@@ -7,4 +7,6 @@ descriptionES: El uso varía, algunos emblemas están disponibles de forma unive
 titleSize: 32
 descSize: 25
 background: linear-gradient(135deg, #fa709a, #fee140)
+imageEN: https://i.imgur.com/W5kp2mH.gif
+imageES: https://i.imgur.com/W5kp2mH.gif
 ---
